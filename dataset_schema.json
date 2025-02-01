@@ -1,0 +1,193 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "LLM-Assisted Model Data Collection Schema",
+    "description": "Schema optimized for collecting AI model data using both structured APIs and LLM extraction",
+    
+    "definitions": {
+      "raw_text_block": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Raw text extracted from source"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL where text was extracted from"
+          },
+          "extraction_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "text_type": {
+            "type": "string",
+            "enum": ["readme", "model_card", "discussion", "documentation", "paper"]
+          }
+        },
+        "required": ["text", "source_url", "extraction_date", "text_type"]
+      },
+      
+      "confidence_score": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "LLM confidence in extracted value"
+          },
+          "extraction_method": {
+            "type": "string",
+            "enum": ["direct_api", "llm_extraction", "human_verified"]
+          }
+        },
+        "required": ["value", "extraction_method"]
+      }
+    },
+  
+    "type": "object",
+    "properties": {
+      "model_basic": {
+        "type": "object",
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "description": "Unique identifier for the model"
+          },
+          "api_data": {
+            "type": "object",
+            "description": "Data directly from Hugging Face/provider API",
+            "properties": {
+              "name": {"type": "string"},
+              "downloads": {"type": "integer"},
+              "likes": {"type": "integer"},
+              "tags": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "raw_sources": {
+            "type": "array",
+            "items": {"$ref": "#/definitions/raw_text_block"},
+            "description": "Raw text blocks for LLM processing"
+          }
+        },
+        "required": ["model_id", "api_data", "raw_sources"]
+      },
+  
+      "llm_extracted_data": {
+        "type": "object",
+        "properties": {
+          "model_relationships": {
+            "type": "object",
+            "properties": {
+              "base_model": {
+                "type": "string",
+                "description": "Base model identifier"
+              },
+              "parent_model": {
+                "type": "string",
+                "description": "Immediate parent model"
+              },
+              "confidence": {"$ref": "#/definitions/confidence_score"},
+              "supporting_text": {
+                "type": "string",
+                "description": "Text snippet supporting relationship inference"
+              }
+            }
+          },
+          "technical_specs": {
+            "type": "object",
+            "properties": {
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "value": {"type": "string"},
+                  "confidence": {"$ref": "#/definitions/confidence_score"},
+                  "source_text": {"type": "string"}
+                }
+              },
+              "architecture": {
+                "type": "object",
+                "properties": {
+                  "value": {"type": "string"},
+                  "confidence": {"$ref": "#/definitions/confidence_score"},
+                  "source_text": {"type": "string"}
+                }
+              },
+              "training_compute": {
+                "type": "object",
+                "properties": {
+                  "value": {"type": "string"},
+                  "confidence": {"$ref": "#/definitions/confidence_score"},
+                  "source_text": {"type": "string"}
+                }
+              }
+            }
+          },
+          "training_details": {
+            "type": "object",
+            "properties": {
+              "datasets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "confidence": {"$ref": "#/definitions/confidence_score"},
+                    "source_text": {"type": "string"}
+                  }
+                }
+              },
+              "training_procedure": {
+                "type": "object",
+                "properties": {
+                  "description": {"type": "string"},
+                  "confidence": {"$ref": "#/definitions/confidence_score"},
+                  "source_text": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      },
+  
+      "validation_flags": {
+        "type": "object",
+        "properties": {
+          "needs_human_review": {
+            "type": "boolean",
+            "description": "Flag for entries needing human verification"
+          },
+          "confidence_threshold_met": {
+            "type": "boolean",
+            "description": "Whether all critical fields meet confidence threshold"
+          },
+          "conflicting_information": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {"type": "string"},
+                "conflicts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {"type": "string"},
+                      "source": {"type": "string"},
+                      "confidence": {"type": "number"}
+                    }
+                  }
+                }
+              }
+            },
+            "description": "List of fields with conflicting information from different sources"
+          }
+        }
+      }
+    },
+    "required": ["model_basic", "llm_extracted_data", "validation_flags"]
+  }
