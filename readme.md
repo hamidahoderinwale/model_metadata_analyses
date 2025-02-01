@@ -1,4 +1,6 @@
 
+# Dataset Schema Design 
+
 Questions asked in development
 give a summary of this design choice, and provide a 2-3 sentence summary of its structure that i include as a comment. also would it be possible to have automated data about the dataset itself (f.ex how many model trees, the average depth, etc?)
 
