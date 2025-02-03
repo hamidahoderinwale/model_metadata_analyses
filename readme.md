@@ -16,7 +16,7 @@ This approach allows you to:
 
 You could query the data in multiple ways:
 
-- Get all models with base_model = "llama-2-70b" to see the whole family-
+- Get all models with base_model = "llama-2-70b" to see the whole family
 - Follow parent_model links to trace specific lineages
 - Group by base_model and count derivatives to measure influence
 
