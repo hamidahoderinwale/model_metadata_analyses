@@ -8,22 +8,17 @@ give a summary of this design choice, and provide a 2-3 sentence summary of its 
 
 This schema is specifically designed for LLM-assisted data collection. Here are the key features:
 
-Raw Text Storage:
-Stores original text blocks from different sources
-Maintains provenance information
-Categorizes text by type (readme, model card, etc.)
+This approach allows you to:
 
-Confidence Tracking:
-Each extracted value includes confidence score
-Tracks extraction method (direct API vs LLM)
-Maintains source text that led to extraction
+- Build complete model trees by following parent_model links
+- Group models by their base_model for family analysis
 
-Structured for LLM Processing:
-Clear separation between API data and LLM-extracted data
-Stores supporting text snippets for verification
-Handles ambiguous or conflicting information
+You could query the data in multiple ways:
 
-Validation System:
-Flags entries needing human review
-Tracks confidence thresholds
-Records conflicting information
+- Get all models with base_model = "llama-2-70b" to see the whole family-
+- Follow parent_model links to trace specific lineages
+- Group by base_model and count derivatives to measure influence
+
+The schema is flexible enough to handle complex cases like:
+
+- Models with multiple parent influences
