@@ -23,3 +23,5 @@ You could query the data in multiple ways:
 The schema is flexible enough to handle complex cases like:
 
 - Models with multiple parent influences
+
+You can validate the dataset schema as updates are made by using the [jsonlint](https://github.com/zaach/jsonlint) package in your terminal (which you must download first `npm install jsonlint -g`). Then, typing `jsonlint <name of your JSON file>`.
