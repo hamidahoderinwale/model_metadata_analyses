@@ -348,14 +348,7 @@
                 "format": "date-time",
                 "description": "Date of the version update"
               }
-            },
-            "required": [
-              "version",
-              "number_of_commits",
-              "last_commit_time",
-              "changes",
-              "date"
-            ]
+            }
           }
         }
       }
