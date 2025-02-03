@@ -27,24 +27,6 @@
       },
       "required": ["text", "source_url", "extraction_date", "text_type"]
     },
-    
-    "confidence_score": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1,
-          "description": "LLM confidence in extracted value"
-        },
-        "extraction_method": {
-          "type": "string",
-          "enum": ["direct_api", "llm_extraction", "human_verified"]
-        }
-      },
-      "required": ["value", "extraction_method"]
-    },
-
     "tree_metadata": {
       "type": "object",
       "properties": {
