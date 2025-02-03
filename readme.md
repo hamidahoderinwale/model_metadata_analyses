@@ -12,7 +12,7 @@ This approach allows you to:
 
 - Build complete model trees by following parent_model links
 - Group models by their base_model for family analysis
-- Here, I would imagine that if the nested data in the schema were flattened., you would extract each property into its own column in a table
+- Here, I would imagine that if the nested data in the schema were flattened: you would extract each property into its own column in a table
 
 You could query the data in multiple ways:
 
