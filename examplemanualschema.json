@@ -1,0 +1,92 @@
+{
+  "model_basic": {
+    "model_id": "wizard-vicuna-70b",
+    "api_data": {
+      "name": "wizard-vicuna-70b",
+      "downloads": 320000,
+      "likes": 1250,
+      "tags": ["llama-2", "vicuna", "instruction-tuning", "chat"]
+    },
+    "raw_sources": [
+      {
+        "text": "Wizard-Vicuna is built upon Vicuna-70B, which itself is derived from LLaMA-2 70B foundation model...",
+        "source_url": "https://huggingface.co/WizardLM/WizardVicuna-70B-Uncensored",
+        "extraction_date": "2024-02-02T10:30:00Z",
+        "text_type": "model_card"
+      },
+      {
+        "text": "Training procedure follows Vicuna's approach with additional instruction tuning...",
+        "source_url": "https://github.com/WizardLM/WizardVicuna",
+        "extraction_date": "2024-02-02T10:30:00Z",
+        "text_type": "readme"
+      }
+    ]
+  },
+  "llm_extracted_data": {
+    "model_relationships": {
+      "base_model": "llama-2-70b",
+      "parent_model": "vicuna-70b",
+      "confidence": {
+        "value": 0.95,
+        "extraction_method": "llm_extraction"
+      },
+      "supporting_text": "Built upon Vicuna-70B, which itself is derived from LLaMA-2 70B foundation model"
+    },
+    "technical_specs": {
+      "parameters": {
+        "value": "70B",
+        "confidence": {
+          "value": 1.0,
+          "extraction_method": "direct_api"
+        },
+        "source_text": "Model name and documentation explicitly state 70B parameters"
+      },
+      "architecture": {
+        "value": "Decoder-only Transformer",
+        "confidence": {
+          "value": 0.98,
+          "extraction_method": "llm_extraction"
+        },
+        "source_text": "Based on LLaMA-2's decoder-only architecture"
+      },
+      "training_compute": {
+        "value": "50K GPU hours",
+        "confidence": {
+          "value": 0.85,
+          "extraction_method": "llm_extraction"
+        },
+        "source_text": "Fine-tuning process required approximately 50,000 GPU hours"
+      }
+    },
+    "training_details": {
+      "datasets": [
+        {
+          "name": "wizard-evol-instruct",
+          "confidence": {
+            "value": 0.92,
+            "extraction_method": "llm_extraction"
+          },
+          "source_text": "Trained on evolved instruction dataset using WizardLM's approach"
+        }
+      ],
+      "training_procedure": {
+        "description": "Fine-tuned using evolved instructions following WizardLM methodology on top of Vicuna-70B model",
+        "confidence": {
+          "value": 0.90,
+          "extraction_method": "llm_extraction"
+        },
+        "source_text": "Training procedure documentation from model card and GitHub repository"
+      }
+    }
+  },
+  "tree_metadata": {
+    "family_id": "llama-2",
+    "branch_path": ["llama-2-70b", "vicuna-70b", "wizard-vicuna-70b"],
+    "generation": 2
+  },
+  "validation_flags": {
+    "needs_human_review": false,
+    "confidence_threshold_met": true,
+    "conflicting_information": []
+  }
+}
