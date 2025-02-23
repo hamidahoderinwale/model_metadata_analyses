@@ -22,3 +22,5 @@ The schema is flexible enough to handle complex cases like:
 - Models with multiple parent influences
 
 You can validate the dataset schema as updates are made by using the [jsonlint](https://github.com/zaach/jsonlint) package in your terminal (which you must download first `npm install jsonlint -g`). Then, typing `jsonlint <name of your JSON file>`.
+
+GColab visualizations: https://colab.research.google.com/drive/1Y-9HkUkCbAJf4njmVy-x1zfApOoOV25D?usp=sharing
