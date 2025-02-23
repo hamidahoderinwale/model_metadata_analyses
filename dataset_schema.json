@@ -30,7 +30,10 @@
           ]
         },
         "third_party_inference_provider": {
-          "type": "boolean",
+          "type": "array",
+          "items": {
+            "type": "string",
+          }
           "description": "Indicates whether this model is supported by third-party inference providers"
         }
       },
