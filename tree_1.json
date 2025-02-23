@@ -1,128 +1,140 @@
 {
-  "model_trees": [
-    {
-      "tree_id": "tree_1",
-      "tree_name": "Fine-Tuning Tree 1",
-      "models": [
-        {
-          "model_id": "GPT-2",
-          "developer": "OpenAI",
-          "common_metadata": {
-            "tags": ["Text Generation", "Transformers"],
-            "license": "MIT",
-            "bias_information": "Available"
+  "model_tree": {
+    "tree_id": "tree_1",
+    "tree_name": "Fine-Tuning Tree 1",
+    "models": [
+      {
+        "model_id": "GPT-2",
+        "developer": "OpenAI",
+        "model_overview": "Base Model",
+        "key_statistics": {
+          "total_downloads": 15217673,
+          "followers": 569,
+          "likes": 2530,
+          "community_members": 111,
+          "contributors": 8,
+          "closed_prs": 37,
+          "commits": 26
+        },
+        "model_specifications": {
+          "size": "137M parameters",
+          "release_year": 2022,
+          "language": "English",
+          "tensor_type": "F32",
+          "inference_time": "2.6s",
+          "model_weights_layers": "Not available (closed-source)"
+        },
+        "derived_models": {
+          "adapters": {
+            "total_models": 1613,
+            "most_downloaded": 16700,
+            "second_most_downloaded": 148
           },
-          "key_statistics": {
-            "total_downloads": 15217673,
-            "followers": 569,
-            "likes": 2530,
-            "community_members": 111,
-            "contributors": 8,
-            "closed_prs": 37,
-            "commits": 26
+          "fine_tunes": {
+            "total_models": 1342,
+            "most_downloaded": 4200
           },
-          "model_specifications": {
-            "size": "137M parameters",
-            "release_year": 2022,
-            "language": "English",
-            "tensor_type": "F32",
-            "inference_time": "2.6s",
-            "model_weights_layers": "Not available (closed-source)"
-          },
-          "derived_models": {
-            "adapters": {
-              "total_models": 1613,
-              "most_downloaded": 16700,
-              "second_most_downloaded": 148
-            },
-            "fine_tunes": {
-              "total_models": 1342,
-              "most_downloaded": 4200
-            },
-            "quantizations": {
-              "total_models": 56,
-              "most_downloaded": 1320
-            }
-          },
-          "training_details": {
-            "training_data": {
-              "dataset": "Webtext",
-              "size": "40GB",
-              "source": "Reddit outbound links (>3 Karma)",
-              "wikipedia_excluded": true
-            },
-            "preprocessing": "Byte-level BPE tokenization",
-            "input_sequence_length": 1024,
-            "evaluation_results": 10
-          },
-          "implementation": {
-            "libraries_supported": ["PyTorch", "TensorFlow"],
-            "deployment": "HF Inference API",
-            "compatible_platforms": [
-              "Amazon Sagemaker",
-              "Autotrain",
-              "Multiple inference providers"
-            ]
+          "quantizations": {
+            "total_models": 56,
+            "most_downloaded": 1320
           }
         },
-        {
-          "model_id": "GPT2_PMC",
-          "developer": "manupande21",
-          "common_metadata": {
-            "tags": ["Text generation", "Transformers"]
+        "training_details": {
+          "training_data": {
+            "dataset": "Webtext",
+            "size": "40GB",
+            "source": "Reddit outbound links (>3 Karma)",
+            "wikipedia_excluded": true
           },
-          "key_statistics": {
-            "downloads_last_month": 4197,
-            "model_size": "124M parameters",
-            "layers": 12,
-            "commits": 3
-          },
-          "technical_specifications": {
-            "base_model": "GPT-2",
-            "framework": "PyTorch",
-            "tensor_type": "F32",
-            "quantization_versions": 1,
-            "precision": "Consistent throughout",
-            "weights_and_layer_information": "Available"
-          },
-          "training_and_deployment": {
-            "hyperparameter_information": "Provided",
-            "compatible_with": [
-              "Amazon Sagemaker",
-              "Autotrain"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "tree_id": "tree_2",
-      "tree_name": "Quantized Models Tree",
-      "models": [
-        {
-          "model_id": "GGUF",
-          "developer": "TensorBlock",
-          "community_stats": {
-            "followers": 52,
-            "commits_in_history": 3,
-            "last_contribution": "3 months ago"
-          },
-          "downloads_and_usage": {
-            "download_statistics": "Not available",
-            "adapters_fine_tunes_merges_quantizations": "None reported"
-          },
-          "model_specifications": {
-            "parameters": 163,
-            "format": "GGUF",
-            "limited_metadata_available": true
-          },
-          "deployment_options": {
-            "can_be_run_using": "Tensorblock client locally",
-            "third_party_inference_providers": "No",
-            "hugging_face_inference_api": "Not deployed"
-          }
-        }
-      ]
-    }
-  ]
+          "preprocessing": "Byte-level BPE tokenization",
+          "input_sequence_length": 1024,
+          "total_training_time": "Not specified",
+          "evaluation_results": 10
+        },
+        "implementation": {
+          "libraries_supported": ["PyTorch", "TensorFlow"],
+          "deployment": "HF Inference API",
+          "compatible_platforms": [
+            "Amazon Sagemaker",
+            "Autotrain",
+            "Multiple inference providers"
+          ],
+          "spaces_using_model": 100
+        },
+        "documentation_compliance": {
+          "license": "MIT",
+          "bias_information": "Available",
+          "CO2_impact": "Not specified",
+          "tokenization_documentation": "Available",
+          "training_process_documentation": "Available",
+          "last_contribution": "12 months ago",
+          "last_pr": "2 months ago"
+        },
+        "tags": ["Text Generation", "Transformers"]
+      },
+      {
+        "model_id": "GPT2_PMC",
+        "developer": "manupande21",
+        "model_overview": "Second Derived Model",
+        "key_statistics": {
+          "downloads_last_month": 4197,
+          "model_size": "124M parameters",
+          "layers": 12,
+          "commits": 3
+        },
+        "technical_specifications": {
+          "base_model": "GPT-2",
+          "framework": "PyTorch",
+          "tensor_type": "F32",
+          "quantization_versions": 1,
+          "precision": "Consistent throughout",
+          "weights_and_layer_information": "Available"
+        },
+        "training_and_deployment": {
+          "hyperparameter_information": "Provided",
+          "compatible_with": [
+            "Amazon Sagemaker",
+            "Autotrain"
+          ],
+          "hugging_face_inference_api": "Not deployed",
+          "third_party_inference_providers": "No support available"
+        },
+        "tags": ["Text Generation", "Transformers"],
+        "community_contributors": "None",
+        "limitations_and_bias_documentation": "Not provided"
+      },
+      {
+        "model_id": "GGUF",
+        "developer": "TensorBlock",
+        "model_overview": "Quantized Model",
+        "community_stats": {
+          "followers": 52,
+          "commits_in_history": 3,
+          "last_contribution": "3 months ago"
+        },
+        "downloads_and_usage": {
+          "download_statistics": "Not available",
+          "adapters_fine_tunes_merges_quantizations": "None reported",
+          "spaces_usage": "None reported"
+        },
+        "model_specifications": {
+          "parameters": 163,
+          "format": "GGUF",
+          "limited_metadata": true,
+          "weights_and_biases_info": "Not available",
+          "layer_information": "Not available"
+        },
+        "deployment_options": {
+          "can_be_run_using_tensorblock_client": true,
+          "third_party_inference_providers": "No",
+          "hf_inference_api": "Not deployed"
+        },
+        "evaluation_data": "No evaluation data available",
+        "additional_information": {
+          "complementary_to_tensorblock_client": true
+        },
+        "tags": ["GGUF", "Generated from Trainer", "Tensorblock"]
+      }
+    ]
+  }
 }
