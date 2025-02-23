@@ -6,7 +6,7 @@
       {
         "model_id": "GPT-2",
         "developer": "OpenAI",
-        "model_overview": "Base Model",
+        "model_level": "Base Model",
         "key_statistics": {
           "total_downloads": 15217673,
           "followers": 569,
@@ -75,7 +75,7 @@
       {
         "model_id": "GPT2_PMC",
         "developer": "manupande21",
-        "model_overview": "Second Derived Model",
+        "model_level": "Second Derived Model",
         "key_statistics": {
           "downloads_last_month": 4197,
           "model_size": "124M parameters",
@@ -106,7 +106,7 @@
       {
         "model_id": "GGUF",
         "developer": "TensorBlock",
-        "model_overview": "Quantized Model",
+        "model_level": "Quantized Model",
         "community_stats": {
           "followers": 52,
           "commits_in_history": 3,
