@@ -43,22 +43,6 @@
         "text_type"
       ]
     },
-    "confidence_score": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "number",
-          "description": "Confidence score (0 to 1)"
-        },
-        "source": {
-          "type": "string",
-          "description": "Source text or reference for the confidence score"
-        }
-      },
-      "required": [
-        "value"
-      ]
-    },
     "model_tree": {
       "type": "object",
       "properties": {
@@ -215,9 +199,6 @@
                     "type": "string",
                     "description": "Training dataset name"
                   },
-                  "confidence": {
-                    "$ref": "#/definitions/confidence_score"
-                  },
                   "source_text": {
                     "type": "string",
                     "description": "Source text for dataset details"
@@ -231,9 +212,6 @@
                 "description": {
                   "type": "string",
                   "description": "Description of training procedure"
-                },
-                "confidence": {
-                  "$ref": "#/definitions/confidence_score"
                 },
                 "source_text": {
                   "type": "string",
@@ -317,7 +295,7 @@
               },
               "score": {
                 "type": "number",
-                "description": "The model’s score on the benchmark"
+                "description": "The model's score on the benchmark"
               }
             },
             "required": [
