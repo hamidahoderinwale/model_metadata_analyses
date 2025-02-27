@@ -1,368 +1,387 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "LLM-Assisted Model Data Collection Schema",
-  "description": "Schema optimized for collecting AI model data using both structured APIs and LLM extraction",
-  "definitions": {
-    "raw_text_block": {
-      "type": "object",
-      "properties": {
-        "text": {
-          "type": "string",
-          "description": "Raw text extracted from source"
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "LLM-Assisted Model Data Collection Schema",
+    "description": "Schema optimized for collecting AI model data using both structured APIs and LLM extraction",
+    "definitions": {
+        "raw_text_block": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "description": "Raw text extracted from source"
+                },
+                "source_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL where text was extracted from"
+                },
+                "extraction_date": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "text_type": {
+                    "type": "string",
+                    "enum": [
+                        "readme",
+                        "model_card",
+                        "discussion",
+                        "documentation",
+                        "paper"
+                    ]
+                },
+                "third_party_inference_provider": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Indicates whether this model is supported by third-party inference providers"
+                }
+            },
+            "required": [
+                "text",
+                "source_url",
+                "text_type"
+            ]
         },
-        "source_url": {
-          "type": "string",
-          "format": "uri",
-          "description": "URL where text was extracted from"
-        },
-        "extraction_date": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "text_type": {
-          "type": "string",
-          "enum": [
-            "readme",
-            "model_card",
-            "discussion",
-            "documentation",
-            "paper"
-          ]
-        },
-        "third_party_inference_provider": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Indicates whether this model is supported by third-party inference providers"
+        "model_tree": {
+            "type": "object",
+            "properties": {
+                "model_id": {
+                    "type": "string",
+                    "description": "Unique identifier for the model"
+                },
+                "parent_models": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of parent model identifiers (if applicable)"
+                },
+                "child_models": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model_tree"
+                    },
+                    "description": "List of child models in the model hierarchy"
+                },
+                "quantizations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "The quantization techniques or strategies applied to the model, if any (e.g., pruning, weight sharing, etc.)"
+                    },
+                    "description": "List of quantization techniques applied to the model"
+                },
+                "model_merges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "The models that have been merged to form this model, if applicable"
+                    },
+                    "description": "List of models merged to create this model"
+                },
+                "training_data_sources": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Sources of data used for training the model"
+                }
+            }
         }
-      },
-      "required": [
-        "text",
-        "source_url",
-        "text_type"
-      ]
     },
-    "model_tree": {
-      "type": "object",
-      "properties": {
-        "model_id": {
-          "type": "string",
-          "description": "Unique identifier for the model"
-        },
-        "parent_model": {
-          "type": "string",
-          "description": "Immediate parent model identifier (if applicable)"
-        },
-        "child_models": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/model_tree"
-          },
-          "description": "Child models in the model hierarchy"
-        },
+    "type": "object",
+    "properties": {
         "model_basic": {
-          "$ref": "#/properties/model_basic"
+            "type": "object",
+            "properties": {
+                "model_id": {
+                    "type": "string",
+                    "description": "Unique identifier for the model"
+                },
+                "api_data": {
+                    "type": "object",
+                    "description": "Data directly from Hugging Face/provider API",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "downloads": {
+                            "type": "integer"
+                        },
+                        "likes": {
+                            "type": "integer"
+                        },
+                        "tags": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "raw_sources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/raw_text_block"
+                    },
+                    "description": "Raw text blocks for LLM processing"
+                },
+                "model_description": {
+                    "type": "string",
+                    "description": "A brief description of the model's purpose, capabilities, and scope"
+                },
+                "intended_use": {
+                    "type": "string",
+                    "description": "The intended use cases and applications of the model"
+                },
+                "limitations": {
+                    "type": "string",
+                    "description": "Known limitations of the model"
+                }
+            },
+            "required": [
+                "model_id",
+                "api_data",
+                "raw_sources"
+            ]
+        },
+        "llm_extracted_data": {
+            "type": "object",
+            "properties": {
+                "model_relationships": {
+                    "type": "object",
+                    "properties": {
+                        "base_model": {
+                            "type": "string",
+                            "description": "Base model identifier"
+                        },
+                        "parent_model": {
+                            "type": "string",
+                            "description": "Immediate parent model"
+                        }
+                    }
+                },
+                "technical_specs": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "description": "Parameter count or model size"
+                                },
+                                "source_text": {
+                                    "type": "string",
+                                    "description": "Source text for parameter details"
+                                }
+                            }
+                        },
+                        "architecture": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "description": "Model architecture details"
+                                },
+                                "source_text": {
+                                    "type": "string",
+                                    "description": "Source text for architecture details"
+                                }
+                            }
+                        },
+                        "training_compute": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "description": "Training compute information"
+                                },
+                                "source_text": {
+                                    "type": "string",
+                                    "description": "Source text for training compute"
+                                }
+                            }
+                        }
+                    }
+                },
+                "training_details": {
+                    "type": "object",
+                    "properties": {
+                        "datasets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Training dataset name"
+                                    },
+                                    "source_text": {
+                                        "type": "string",
+                                        "description": "Source text for dataset details"
+                                    }
+                                }
+                            }
+                        },
+                        "training_procedure": {
+                            "type": "object",
+                            "properties": {
+                                "description": {
+                                    "type": "string",
+                                    "description": "Description of training procedure"
+                                },
+                                "source_text": {
+                                    "type": "string",
+                                    "description": "Source text for training procedure"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "ethics_and_licensing": {
+            "type": "object",
+            "properties": {
+                "bias_and_fairness": {
+                    "type": "string",
+                    "description": "Known biases in the model's behavior and how these might affect various groups"
+                },
+                "disclaimer": {
+                    "type": "string",
+                    "description": "A disclaimer about potential misuses of the model or any warnings for certain deployment scenarios"
+                },
+                "license": {
+                    "type": "string",
+                    "description": "The model's licensing type (e.g., MIT, Apache 2.0, proprietary)"
+                },
+                "usage_restrictions": {
+                    "type": "string",
+                    "description": "Specific restrictions or guidelines for using the model, such as ethical constraints or country-specific restrictions"
+                },
+                "model_citation": {
+                    "type": "string",
+                    "description": "How to properly cite the model for academic or research purposes"
+                }
+            }
+        },
+        "evaluation_and_benchmarking": {
+            "type": "object",
+            "properties": {
+                "evaluation_results": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "task": {
+                                "type": "string",
+                                "description": "The task the model was evaluated on (e.g., text classification, NER)"
+                            },
+                            "metric": {
+                                "type": "string",
+                                "description": "The evaluation metric (e.g., accuracy, F1 score)"
+                            },
+                            "value": {
+                                "type": "number",
+                                "description": "The value of the evaluation metric"
+                            },
+                            "dataset": {
+                                "type": "string",
+                                "description": "The dataset used for evaluation"
+                            },
+                            "evaluation_protocol": {
+                                "type": "string",
+                                "description": "Details on how the evaluation was performed"
+                            }
+                        },
+                        "required": [
+                            "task",
+                            "metric",
+                            "value"
+                        ]
+                    }
+                },
+                "benchmark_results": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "benchmark_name": {
+                                "type": "string",
+                                "description": "The name of the benchmark (e.g., GLUE, SuperGLUE)"
+                            },
+                            "score": {
+                                "type": "number",
+                                "description": "The model's score on the benchmark"
+                            }
+                        },
+                        "required": [
+                            "benchmark_name",
+                            "score"
+                        ]
+                    }
+                }
+            }
+        },
+        "deployment_and_inference": {
+            "type": "object",
+            "properties": {
+                "inference_usage": {
+                    "type": "string",
+                    "description": "Guidance on how to use the model for inference (e.g., API endpoint, running locally)"
+                },
+                "deployment_status": {
+                    "type": "string",
+                    "description": "Information about whether the model is available for deployment (e.g., 'available on Hugging Face Inference API', 'can be run locally')"
+                }
+            }
+        },
+        "contributors_and_authors": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "List of authors or contributors to the model"
+                    }
+                },
+                "version_history": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "version": {
+                                "type": "string",
+                                "description": "Version of the model"
+                            },
+                            "number_of_commits": {
+                                "type": "integer",
+                                "description": "The total number of commits made to the model's repository"
+                            },
+                            "last_commit_time": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "When was the last time a commit was made, if applicable."
+                            },
+                            "changes": {
+                                "type": "string",
+                                "description": "Summary of the changes made in the version"
+                            },
+                            "date": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Date of the version update"
+                            }
+                        }
+                    }
+                }
+            }
         }
-      },
-      "required": [
-        "model_id",
+    },
+    "required": [
         "model_basic"
-      ]
-    }
-  },
-  "type": "object",
-  "properties": {
-    "model_basic": {
-      "type": "object",
-      "properties": {
-        "model_id": {
-          "type": "string",
-          "description": "Unique identifier for the model"
-        },
-        "api_data": {
-          "type": "object",
-          "description": "Data directly from Hugging Face/provider API",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "downloads": {
-              "type": "integer"
-            },
-            "likes": {
-              "type": "integer"
-            },
-            "tags": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "raw_sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/raw_text_block"
-          },
-          "description": "Raw text blocks for LLM processing"
-        },
-        "model_description": {
-          "type": "string",
-          "description": "A brief description of the model's purpose, capabilities, and scope"
-        },
-        "intended_use": {
-          "type": "string",
-          "description": "The intended use cases and applications of the model"
-        },
-        "limitations": {
-          "type": "string",
-          "description": "Known limitations of the model"
-        }
-      },
-      "required": [
-        "model_id",
-        "api_data",
-        "raw_sources"
-      ]
-    },
-    "llm_extracted_data": {
-      "type": "object",
-      "properties": {
-        "model_relationships": {
-          "type": "object",
-          "properties": {
-            "base_model": {
-              "type": "string",
-              "description": "Base model identifier"
-            },
-            "parent_model": {
-              "type": "string",
-              "description": "Immediate parent model"
-            }
-          }
-        },
-        "technical_specs": {
-          "type": "object",
-          "properties": {
-            "parameters": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string",
-                  "description": "Parameter count or model size"
-                },
-                "source_text": {
-                  "type": "string",
-                  "description": "Source text for parameter details"
-                }
-              }
-            },
-            "architecture": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string",
-                  "description": "Model architecture details"
-                },
-                "source_text": {
-                  "type": "string",
-                  "description": "Source text for architecture details"
-                }
-              }
-            },
-            "training_compute": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string",
-                  "description": "Training compute information"
-                },
-                "source_text": {
-                  "type": "string",
-                  "description": "Source text for training compute"
-                }
-              }
-            }
-          }
-        },
-        "training_details": {
-          "type": "object",
-          "properties": {
-            "datasets": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Training dataset name"
-                  },
-                  "source_text": {
-                    "type": "string",
-                    "description": "Source text for dataset details"
-                  }
-                }
-              }
-            },
-            "training_procedure": {
-              "type": "object",
-              "properties": {
-                "description": {
-                  "type": "string",
-                  "description": "Description of training procedure"
-                },
-                "source_text": {
-                  "type": "string",
-                  "description": "Source text for training procedure"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "ethics_and_licensing": {
-      "type": "object",
-      "properties": {
-        "bias_and_fairness": {
-           "type": "string",
-          "description": "Known biases in the model's behavior and how these might affect various groups"
-        },
-        "disclaimer": {
-          "type": "string",
-          "description": "A disclaimer about potential misuses of the model or any warnings for certain deployment scenarios"
-        },
-        "license": {
-          "type": "string",
-          "description": "The model's licensing type (e.g., MIT, Apache 2.0, proprietary)"
-        },
-        "usage_restrictions": {
-          "type": "string",
-          "description": "Specific restrictions or guidelines for using the model, such as ethical constraints or country-specific restrictions"
-        },
-        "model_citation": {
-          "type": "string",
-          "description": "How to properly cite the model for academic or research purposes"
-        }
-      }
-    },
-    "evaluation_and_benchmarking": {
-      "type": "object",
-      "properties": {
-        "evaluation_results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "task": {
-                "type": "string",
-                "description": "The task the model was evaluated on (e.g., text classification, NER)"
-              },
-              "metric": {
-                "type": "string",
-                "description": "The evaluation metric (e.g., accuracy, F1 score)"
-              },
-              "value": {
-                "type": "number",
-                "description": "The value of the evaluation metric"
-              },
-              "dataset": {
-                "type": "string",
-                "description": "The dataset used for evaluation"
-              },
-              "evaluation_protocol": {
-                "type": "string",
-                "description": "Details on how the evaluation was performed"
-              }
-            },
-            "required": [
-              "task",
-              "metric",
-              "value"
-            ]
-          }
-        },
-        "benchmark_results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "benchmark_name": {
-                "type": "string",
-                "description": "The name of the benchmark (e.g., GLUE, SuperGLUE)"
-              },
-              "score": {
-                "type": "number",
-                "description": "The model's score on the benchmark"
-              }
-            },
-            "required": [
-              "benchmark_name",
-              "score"
-            ]
-          }
-        }
-      }
-    },
-    "deployment_and_inference": {
-      "type": "object",
-      "properties": {
-        "inference_usage": {
-          "type": "string",
-          "description": "Guidance on how to use the model for inference (e.g., API endpoint, running locally)"
-        },
-        "deployment_status": {
-          "type": "string",
-          "description": "Information about whether the model is available for deployment (e.g., 'available on Hugging Face Inference API', 'can be run locally')"
-        }
-      }
-    },
-    "contributors_and_authors": {
-      "type": "object",
-      "properties": {
-        "authors": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "description": "List of authors or contributors to the model"
-          }
-        },
-        "version_history": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "version": {
-                "type": "string",
-                "description": "Version of the model"
-              },
-              "number_of_commits": {
-                "type": "integer",
-                "description": "The total number of commits made to the model's repository"
-              },
-              "last_commit_time": {
-                "type": "string",
-                "format": "date-time",
-                "description": "When was the last time a commit was made, if applicable."
-              },
-              "changes": {
-                "type": "string",
-                "description": "Summary of the changes made in the version"
-              },
-              "date": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Date of the version update"
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "required": [
-    "model_basic"
-  ]
+    ]
 }
