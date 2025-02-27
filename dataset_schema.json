@@ -67,16 +67,14 @@
                 "quantizations": {
                     "type": "array",
                     "items": {
-                        "type": "string",
-                        "description": "The quantization techniques or strategies applied to the model, if any (e.g., pruning, weight sharing, etc.)"
+                        "type": "string"
                     },
-                    "description": "List of quantization techniques applied to the model"
+                    "description": "List of quantization techniques applied to the model (e.g., pruning, weight sharing, etc.)"
                 },
                 "model_merges": {
                     "type": "array",
                     "items": {
-                        "type": "string",
-                        "description": "The models that have been merged to form this model, if applicable"
+                        "type": "string"
                     },
                     "description": "List of models merged to create this model"
                 },
@@ -87,7 +85,10 @@
                     },
                     "description": "Sources of data used for training the model"
                 }
-            }
+            },
+            "required": [
+                "model_id"
+            ]
         }
     },
     "type": "object",
@@ -345,37 +346,7 @@
                     "type": "array",
                     "items": {
                         "type": "string",
-                        "description": "List of authors or contributors to the model"
-                    }
-                },
-                "version_history": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "version": {
-                                "type": "string",
-                                "description": "Version of the model"
-                            },
-                            "number_of_commits": {
-                                "type": "integer",
-                                "description": "The total number of commits made to the model's repository"
-                            },
-                            "last_commit_time": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "When was the last time a commit was made, if applicable."
-                            },
-                            "changes": {
-                                "type": "string",
-                                "description": "Summary of the changes made in the version"
-                            },
-                            "date": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "Date of the version update"
-                            }
-                        }
+                        "description": "List of authors or contributors who contributed to the development of the model"
                     }
                 }
             }
