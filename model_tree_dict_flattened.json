@@ -1,0 +1,25 @@
+{
+    "model_id": "model_A",
+    "parent_models": ["model_X", "model_Y"],
+    "child_models": [
+        {
+            "model_id": "model_B",
+            "parent_models": ["model_A"],
+            "child_models": [],
+            "quantizations": ["pruning"],
+            "model_merges": [],
+            "training_data_sources": ["dataset_1"]
+        },
+        {
+            "model_id": "model_C",
+            "parent_models": ["model_A"],
+            "child_models": [],
+            "quantizations": ["weight sharing"],
+            "model_merges": ["model_B"],
+            "training_data_sources": ["dataset_2", "dataset_3"]
+        }
+    ],
+    "quantizations": ["pruning", "weight sharing"],
+    "model_merges": ["model_X", "model_Y"],
+    "training_data_sources": ["dataset_1", "dataset_2"]
+}
