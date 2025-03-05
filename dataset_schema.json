@@ -43,54 +43,6 @@
                 "text_type"
             ]
         },
-        "model_tree": {
-            "type": "object",
-            "properties": {
-                "model_id": {
-                    "type": "string",
-                    "description": "Unique identifier for the model"
-                },
-                "parent_models": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "List of parent model identifiers (if applicable)"
-                },
-                "child_models": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model_tree"
-                    },
-                    "description": "List of child models in the model hierarchy"
-                },
-                "quantizations": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "List of quantization techniques applied to the model (e.g., pruning, weight sharing, etc.)"
-                },
-                "model_merges": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "List of models merged to create this model"
-                },
-                "training_data_sources": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Sources of data used for training the model"
-                }
-            },
-            "required": [
-                "model_id"
-            ]
-        }
-    },
     "type": "object",
     "properties": {
         "model_basic": {
