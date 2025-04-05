@@ -1,7 +1,7 @@
 
-# Hugging Face Model Hub Meta-analysis project
+# Hugging Face Model Hub Meta-analysis repo
 
-Notebook scripts to do the following:
+Notebook scripts to do the following using the [HF Hub API](https://huggingface.co/docs/huggingface.js/en/hub/README):
 - Build complete model trees by following parent_model links
 - Get metadata for a given model and it's fine-tunes
 
@@ -11,7 +11,7 @@ Once you've made a dataset, you could look into querying the data by:
 - Follow parent_model links to trace specific lineages
 - Group by base_model and count derivatives to measure influence
 
-*We've yet to look into fine-tunes, adapters, and model merges.
+*We've yet to look into fine-tunes, adapters, and model merges.*
 
 ## External Links
 - Scraping Notebook: https://colab.research.google.com/drive/1Rg2_wSjXzVJq-CMQZQU4GyMVBlZo0og3?usp=sharing
