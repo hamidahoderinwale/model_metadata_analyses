@@ -1,15 +1,9 @@
 
-# Dataset Schema Design 
+# Hugging Face Model Hub Meta-analysis project
 
-** Note: Below is partially-generated (by Claude) summary of the dataset schema structure.
-
-This schema is specifically designed for LLM-assisted data collection. Here are the key features:
-
-This approach allows you to:
-
+Notebook scripts to do the following:
 - Build complete model trees by following parent_model links
-- Group models by their base_model for family analysis
-- Here, I would imagine that if the nested data in the schema were flattened: you would extract each property into its own column in a table
+- Get metadata for a given model and it's fine-tunes
 
 You could query the data in multiple ways:
 
@@ -17,11 +11,9 @@ You could query the data in multiple ways:
 - Follow parent_model links to trace specific lineages
 - Group by base_model and count derivatives to measure influence
 
-The schema is flexible enough to handle complex cases like:
-
-- Models with multiple parent influences
-
 You can validate the dataset schema as updates are made by using the [jsonlint](https://github.com/zaach/jsonlint) package in your terminal (which you must download first `npm install jsonlint -g`). Then, typing `jsonlint <name of your JSON file>`.
+
+We've yet to look into fine-tunes, adapters, and model merges.
 
 ## External Links
 - Scraping Notebook: https://colab.research.google.com/drive/1Rg2_wSjXzVJq-CMQZQU4GyMVBlZo0og3?usp=sharing
