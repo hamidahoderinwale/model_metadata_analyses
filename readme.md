@@ -5,7 +5,7 @@ Notebook scripts to do the following using the [HF Hub API](https://huggingface.
 - Build complete model trees by following parent_model links
 - Get metadata for a given model and it's fine-tunes
 
-Once you've made a dataset, you could look into querying the data by:
+Once you've made a dataset, you could look into querying the data and try to:
 
 - Get all models with base_model = "llama-2-70b" to see the whole family
 - Follow parent_model links to trace specific lineages
