@@ -5,15 +5,13 @@ Notebook scripts to do the following:
 - Build complete model trees by following parent_model links
 - Get metadata for a given model and it's fine-tunes
 
-You could query the data in multiple ways:
+Once you've made a dataset, you could look into querying the data by:
 
 - Get all models with base_model = "llama-2-70b" to see the whole family
 - Follow parent_model links to trace specific lineages
 - Group by base_model and count derivatives to measure influence
 
-You can validate the dataset schema as updates are made by using the [jsonlint](https://github.com/zaach/jsonlint) package in your terminal (which you must download first `npm install jsonlint -g`). Then, typing `jsonlint <name of your JSON file>`.
-
-We've yet to look into fine-tunes, adapters, and model merges.
+*We've yet to look into fine-tunes, adapters, and model merges.
 
 ## External Links
 - Scraping Notebook: https://colab.research.google.com/drive/1Rg2_wSjXzVJq-CMQZQU4GyMVBlZo0og3?usp=sharing
