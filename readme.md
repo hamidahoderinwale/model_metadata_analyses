@@ -1,5 +1,5 @@
 
-# Hugging Face Model Hub Meta-analysis repo
+# Hugging Face Model Hub meta-analysis repo
 
 Notebook scripts to do the following using the [HF Hub API](https://huggingface.co/docs/huggingface.js/en/hub/README):
 - Build complete model trees by following parent_model links
