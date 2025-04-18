@@ -18,3 +18,5 @@ Once you've made a dataset, you could look into querying the data and try to:
 - Scraping Notebook: https://colab.research.google.com/drive/1Rg2_wSjXzVJq-CMQZQU4GyMVBlZo0og3?usp=sharing
 - GColab visualizations (Early/Ignore): https://colab.research.google.com/drive/1Y-9HkUkCbAJf4njmVy-x1zfApOoOV25D?usp=sharing
 - Libraries Dataset (WIP): https://docs.google.com/spreadsheets/d/1tI67UpqRyy7IEZNlBvIKanvqw5trYUxMnLNtufRQ7o8/edit?usp=sharing
+
+## [Dataset Card](https://sites.research.google/datacardsplaybook/) [TK]
