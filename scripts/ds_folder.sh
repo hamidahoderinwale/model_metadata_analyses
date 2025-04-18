@@ -1,23 +1,19 @@
 #!/bin/bash
 
-# Step 1: Move all .csv and .json files into datasets/
-mkdir -p datasets
-for file in *.csv *.json; do
-  [[ -e "$file" ]] && mv -v "$file" datasets/
+cd datasets || exit
+
+for json in ./*.json; do
+  # Skip if no JSON files are found
+  [[ -e "$json" ]] || { echo "No .json files found."; break; }
+
+  base="${json%.*}"        # Remove extension
+  base_name="${base##*/}"  # Remove path prefix
+  csv="./${base_name}.csv" # Expected matching CSV file
+
+  if [[ -f "$csv" ]]; then
+    mkdir -p "$base_name"
+    mv -v "$json" "$csv" "$base_name/"
+  else
+    echo "Skipping $json (no matching CSV: $csv)"
+  fi
 done
-
-cd datasets || exit 1
-
-# Step 3: Loop through all .csv and .json files
-for file in *.csv *.json; do
-  [[ -e "$file" ]] || continue
-  base="${file%.*}"
-  base_name="${base##*/}"
-  csv="${base_name}.csv"
-  json="${base_name}.json"
-
-  mkdir -p "$base_name"
-
-  [[ -f "${base}.csv" ]] && mv -v "${base}.csv" "$folder/"
-  [[ -f "${base}.json" ]] && mv -v "${base}.json" "$folder/"
-done 
