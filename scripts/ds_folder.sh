@@ -10,10 +10,13 @@ done
 
   mkdir -p "$base_name"
 
-  if [[ -f "$json" ]]; then
-    mv -v "$csv" "$json" "$base_name/"
-  else
-    echo "No matching JSON for $csv, moving CSV alone."
+  if [[ -f "$json"]]; then
+    mv -v"$json" "$base_name/"
+  else if 
+    if [[ -f "$csv"]]; then
+    mv -v"$csv" "$base_name/"
+  else 
+    echo "No matching JSON or CSVs, cannot be ran"
     mv -v "$csv" "$base_name/"
   fi
 done
