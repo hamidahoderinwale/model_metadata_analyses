@@ -1,11 +1,20 @@
 #!/bin/bash
-cd datasets && for json in ./*.json; do 
-  base="${json%.*}";
-  base="${base##*/}";  # Remove path prefix if exists
-  csv="./${base}.csv";
-  if [[ -f "$csv" ]]; then
-    mkdir -p "$base" && mv -v "$json" "$csv" "$base/";
+
+cd datasets || exit
+
+for csv in ./*.csv; do
+  [[ -e "$csv" ]] || { echo "No .csv files found."; break; }
+
+  base="${csv%.*}"
+  base_name="${base##*/}"
+  json="./${base_name}.json"
+
+  mkdir -p "$base_name"
+
+  if [[ -f "$json" ]]; then
+    mv -v "$csv" "$json" "$base_name/"
   else
-    echo "Skipping ./*.json (no matching CSV)";
-  fi;
+    echo "No matching JSON for $csv, moving CSV alone."
+    mv -v "$csv" "$base_name/"
+  fi
 done
