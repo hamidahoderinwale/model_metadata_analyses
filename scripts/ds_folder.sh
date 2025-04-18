@@ -6,9 +6,6 @@ for file in *.csv *.json; do
   [[ -e "$file" ]] && mv -v "$file" datasets/
 done
 
-for csv in ./*.csv; do
-  [[ -e "$csv" ]] || { echo "No .csv files found."; break; }
-
   base="${csv%.*}"
   base_name="${base##*/}"
   json="./${base_name}.json"
