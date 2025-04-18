@@ -18,16 +18,6 @@ for file in *.csv *.json; do
 
   mkdir -p "$base_name"
 
-  if [[ -f "$csv" && -f "$json" ]]; then
-    echo "Moving both CSV and JSON for $base_name"
-    mv -v "$csv" "$json" "$base_name/"
-  elif [[ -f "$csv" ]]; then
-    echo "Only CSV exists for $base_name"
-    mv -v "$csv" "$base_name/"
-  elif [[ -f "$json" ]]; then
-    echo "Only JSON exists for $base_name"
-    mv -v "$json" "$base_name/"
-  else
-    echo "No matching files for $base_name"
-  fi
-done
+  [[ -f "${base}.csv" ]] && mv -v "${base}.csv" "$folder/"
+  [[ -f "${base}.json" ]] && mv -v "${base}.json" "$folder/"
+done 
