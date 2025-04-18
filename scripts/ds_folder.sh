@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd datasets || exit
-
 for file in *.csv *.json; do
   [[ -e "$file" ]] && mv -v "$file" datasets/
 done
