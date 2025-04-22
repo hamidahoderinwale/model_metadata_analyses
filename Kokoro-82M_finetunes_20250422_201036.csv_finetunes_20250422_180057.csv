@@ -1,0 +1,437 @@
+model_id,card,metadata,depth,children,children_count,adapters,adapters_count,quantized,quantized_count,merges,merges_count,spaces,spaces_count
+hexgrad/Kokoro-82M,"---
+license: apache-2.0
+language:
+- en
+base_model:
+- yl4579/StyleTTS2-LJSpeech
+pipeline_tag: text-to-speech
+---
+**Kokoro** is an open-weight TTS model with 82 million parameters. Despite its lightweight architecture, it delivers comparable quality to larger models while being significantly faster and more cost-efficient. With Apache-licensed weights, Kokoro can be deployed anywhere from production environments to personal projects.
+
+<audio controls><source src=""https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/HEARME.wav"" type=""audio/wav""></audio>
+
+🐈 **GitHub**: https://github.com/hexgrad/kokoro
+
+🚀 **Demo**: https://hf.co/spaces/hexgrad/Kokoro-TTS
+
+> [!NOTE]
+> As of April 2025, the market rate of Kokoro served over API is **under $1 per million characters of text input**, or under $0.06 per hour of audio output. (On average, 1000 characters of input is about 1 minute of output.) Sources: [ArtificialAnalysis/Replicate at 65 cents per M chars](https://artificialanalysis.ai/text-to-speech/model-family/kokoro#price) and [DeepInfra at 80 cents per M chars](https://deepinfra.com/hexgrad/Kokoro-82M).
+>
+> This is an Apache-licensed model, and Kokoro has been deployed in numerous projects and commercial APIs. We welcome the deployment of the model in real use cases.
+
+> [!CAUTION]
+> Fake websites like kokorottsai_com (snapshot: https://archive.ph/nRRnk) and kokorotts_net (snapshot: https://archive.ph/60opa) are likely scams masquerading under the banner of a popular model.
+>
+> Any website containing ""kokoro"" in its root domain (e.g. kokorottsai_com, kokorotts_net) is **NOT owned by and NOT affiliated with this model page or its author**, and attempts to imply otherwise are red flags.
+
+- [Releases](#releases)
+- [Usage](#usage)
+- [EVAL.md](https://huggingface.co/hexgrad/Kokoro-82M/blob/main/EVAL.md) ↗️
+- [SAMPLES.md](https://huggingface.co/hexgrad/Kokoro-82M/blob/main/SAMPLES.md) ↗️
+- [VOICES.md](https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md) ↗️
+- [Model Facts](#model-facts)
+- [Training Details](#training-details)
+- [Creative Commons Attribution](#creative-commons-attribution)
+- [Acknowledgements](#acknowledgements)
+
+### Releases
+
+| Model | Published | Training Data | Langs & Voices | SHA256 |
+| ----- | --------- | ------------- | -------------- | ------ |
+| **v1.0** | **2025 Jan 27** | **Few hundred hrs** | [**8 & 54**](https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md) | `496dba11` |
+| [v0.19](https://huggingface.co/hexgrad/kLegacy/tree/main/v0.19) | 2024 Dec 25 | <100 hrs | 1 & 10 | `3b0c392f` |
+
+| Training Costs | v0.19 | v1.0 | **Total** |
+| -------------- | ----- | ---- | ----- |
+| in A100 80GB GPU hours | 500 | 500 | **1000** |
+| average hourly rate | $0.80/h | $1.20/h | **$1/h** |
+| in USD | $400 | $600 | **$1000** |
+
+### Usage
+You can run this basic cell on [Google Colab](https://colab.research.google.com/). [Listen to samples](https://huggingface.co/hexgrad/Kokoro-82M/blob/main/SAMPLES.md). For more languages and details, see [Advanced Usage](https://github.com/hexgrad/kokoro?tab=readme-ov-file#advanced-usage).
+```py
+!pip install -q kokoro>=0.9.2 soundfile
+!apt-get -qq -y install espeak-ng > /dev/null 2>&1
+from kokoro import KPipeline
+from IPython.display import display, Audio
+import soundfile as sf
+import torch
+pipeline = KPipeline(lang_code='a')
+text = '''
+[Kokoro](/kˈOkəɹO/) is an open-weight TTS model with 82 million parameters. Despite its lightweight architecture, it delivers comparable quality to larger models while being significantly faster and more cost-efficient. With Apache-licensed weights, [Kokoro](/kˈOkəɹO/) can be deployed anywhere from production environments to personal projects.
+'''
+generator = pipeline(text, voice='af_heart')
+for i, (gs, ps, audio) in enumerate(generator):
+    print(i, gs, ps)
+    display(Audio(data=audio, rate=24000, autoplay=i==0))
+    sf.write(f'{i}.wav', audio, 24000)
+```
+Under the hood, `kokoro` uses [`misaki`](https://pypi.org/project/misaki/), a G2P library at https://github.com/hexgrad/misaki
+
+### Model Facts
+
+**Architecture:**
+- StyleTTS 2: https://arxiv.org/abs/2306.07691
+- ISTFTNet: https://arxiv.org/abs/2203.02395
+- Decoder only: no diffusion, no encoder release
+
+**Architected by:** Li et al @ https://github.com/yl4579/StyleTTS2
+
+**Trained by**: `@rzvzn` on Discord
+
+**Languages:** Multiple
+
+**Model SHA256 Hash:** `496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4`
+
+### Training Details
+
+**Data:** Kokoro was trained exclusively on **permissive/non-copyrighted audio data** and IPA phoneme labels. Examples of permissive/non-copyrighted audio include:
+- Public domain audio
+- Audio licensed under Apache, MIT, etc
+- Synthetic audio<sup>[1]</sup> generated by closed<sup>[2]</sup> TTS models from large providers<br/>
+[1] https://copyright.gov/ai/ai_policy_guidance.pdf<br/>
+[2] No synthetic audio from open TTS models or ""custom voice clones""
+
+**Total Dataset Size:** A few hundred hours of audio
+
+**Total Training Cost:** About $1000 for 1000 hours of A100 80GB vRAM
+
+### Creative Commons Attribution
+
+The following CC BY audio was part of the dataset used to train Kokoro v1.0.
+
+| Audio Data | Duration Used | License | Added to Training Set After |
+| ---------- | ------------- | ------- | --------------------------- |
+| [Koniwa](https://github.com/koniwa/koniwa) `tnc` | <1h | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.ja) | v0.19 / 22 Nov 2024 |
+| [SIWIS](https://datashare.ed.ac.uk/handle/10283/2353) | <11h | [CC BY 4.0](https://datashare.ed.ac.uk/bitstream/handle/10283/2353/license_text) | v0.19 / 22 Nov 2024 |
+
+### Acknowledgements
+
+- 🛠️ [@yl4579](https://huggingface.co/yl4579) for architecting StyleTTS 2.
+- 🏆 [@Pendrokar](https://huggingface.co/Pendrokar) for adding Kokoro as a contender in the TTS Spaces Arena.
+- 📊 Thank you to everyone who contributed synthetic training data.
+- ❤️ Special thanks to all compute sponsors.
+- 👾 Discord server: https://discord.gg/QuGxSWBfQy
+- 🪽 Kokoro is a Japanese word that translates to ""heart"" or ""spirit"". It is also the name of an [AI in the Terminator franchise](https://terminator.fandom.com/wiki/Kokoro).
+
+<img src=""https://static0.gamerantimages.com/wordpress/wp-content/uploads/2024/08/terminator-zero-41-1.jpg"" width=""400"" alt=""kokoro"" />
+","{""id"": ""hexgrad/Kokoro-82M"", ""author"": ""hexgrad"", ""sha"": ""f3ff3571791e39611d31c381e3a41a3af07b4987"", ""last_modified"": ""2025-04-10 18:12:48+00:00"", ""created_at"": ""2024-12-26 00:20:08+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 1981704, ""downloads_all_time"": null, ""likes"": 4086, ""library_name"": null, ""gguf"": null, ""inference"": null, ""tags"": [""text-to-speech"", ""en"", ""arxiv:2306.07691"", ""arxiv:2203.02395"", ""base_model:yl4579/StyleTTS2-LJSpeech"", ""base_model:finetune:yl4579/StyleTTS2-LJSpeech"", ""doi:10.57967/hf/4329"", ""license:apache-2.0"", ""region:us""], ""pipeline_tag"": ""text-to-speech"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- yl4579/StyleTTS2-LJSpeech\nlanguage:\n- en\nlicense: apache-2.0\npipeline_tag: text-to-speech"", ""widget_data"": null, ""model_index"": null, ""config"": {}, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='DONATE.md', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='EVAL.md', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='SAMPLES.md', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='VOICES.md', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='config.json', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='eval/ArtificialAnalysis-2025-02-26.jpeg', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='eval/TTS_Arena-2025-02-26.jpeg', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='eval/TTS_Spaces_Arena-2025-02-26.jpeg', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='kokoro-v1_0.pth', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/HEARME.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/af_heart_0.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/af_heart_1.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/af_heart_2.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/af_heart_3.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/af_heart_4.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='samples/af_heart_5.wav', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_alloy.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_aoede.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_bella.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_heart.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_jessica.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_kore.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_nicole.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_nova.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_river.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_sarah.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/af_sky.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_adam.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_echo.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_eric.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_fenrir.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_liam.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_michael.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_onyx.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_puck.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/am_santa.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bf_alice.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bf_emma.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bf_isabella.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bf_lily.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bm_daniel.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bm_fable.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bm_george.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/bm_lewis.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/ef_dora.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/em_alex.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/em_santa.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/ff_siwis.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/hf_alpha.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/hf_beta.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/hm_omega.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/hm_psi.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/if_sara.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/im_nicola.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/jf_alpha.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/jf_gongitsune.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/jf_nezumi.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/jf_tebukuro.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/jm_kumo.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/pf_dora.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/pm_alex.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/pm_santa.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zf_xiaobei.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zf_xiaoni.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zf_xiaoxiao.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zf_xiaoyi.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zm_yunjian.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zm_yunxi.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zm_yunxia.pt', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='voices/zm_yunyang.pt', size=None, blob_id=None, lfs=None)""], ""spaces"": [""hexgrad/Kokoro-TTS"", ""TTS-AGI/TTS-Arena"", ""Pendrokar/TTS-Spaces-Arena"", ""Remsky/Kokoro-TTS-Zero"", ""ginipick/DeepSeekR1-LIVE"", ""mozilla-ai/document-to-podcast"", ""NeuralFalcon/KOKORO-TTS-1.0"", ""sagar007/DeepSeekR1_Search"", ""Wismut/Kokoro_TTS_Compare"", ""NeuralFalcon/Kokoro-TTS"", ""RobinsAIWorld/Kokoro-TTS-cpu"", ""RORONovaLuffy/hexgrad-Kokoro-82M"", ""shukdevdatta123/Kokoro-TTS"", ""ngxson/kokoro-podcast-backend"", ""Remsky/FastKoko"", ""RobinsAIWorld/KokoZero"", ""rahul7star/Kokoro-TTS-Hindi"", ""sdafd/Kokoro-TTS"", ""sdafd/KOKORO-TTS-1.0"", ""BasToTheMax/FREE-KokoroTTS"", ""Badger123t/Kokoro-TTS"", ""Libra8ed-Tech/Kokoro-TTS"", ""Ogo123/Kokoro-TTS"", ""tgu6/hexgrad-Kokoro-82M"", ""Masterdqqq/vepp-tts"", ""brainzcode/hexgrad-Kokoro-82M"", ""joseph6377/hexgrad-Kokoro-82M9"", ""piopio88/hexgrad-Kokoro-82M"", ""traghav/hexgrad-Kokoro-82M"", ""joaocarloscruz/hexgrad-Kokoro-82M"", ""ahmedabdelali/hexgrad-Kokoro-82M"", ""liaskos/hexgrad-Kokoro-82M"", ""kunkun8888666/hexgrad-Kokoro-82M"", ""REL9X/hexgrad-Kokoro-82M"", ""bertglo/hexgrad-Kokoro-82M"", ""liuliuha/hexgrad-Kokoro-82M"", ""RTCode-ai/hexgrad-Kokoro-82M"", ""jhon823/hexgrad-Kokoro-82M"", ""ChrisWren/hexgrad-Kokoro-82M"", ""jayhust/hexgrad-Kokoro-82M"", ""kukikoki/hexgrad-Kokoro-82M"", ""hiteshganjoo/hexgrad-Kokoro-82M"", ""Shahzadasghar/hexgrad-Kokoro-82M"", ""realviligant/hexgrad-Kokoro-82M"", ""imrnh/AutiMate_tts_hexgrad-Kokoro-82M"", ""TrueGoat/hexgrad-Kokoro-82M"", ""xiex/hexgrad-Kokoro-82M"", ""segelyang/hexgrad-Kokoro-82M"", ""ClickAI/hexgrad-Kokoro-82M"", ""practice22/hexgrad-Kokoro-82M"", ""HeyiAgency/hexgrad-Kokoro-82M"", ""Messer185/hexgrad-Kokoro-82M"", ""peixl/hexgrad-Kokoro-82M"", ""rtzti2000/hexgrad-Kokoro-82M"", ""LGBTjews/hexgrad-Kokoro-82M"", ""Marcel637838383/hexgrad-Kokoro-82M"", ""Ahmadbagzada/hexgrad-Kokoro-82M"", ""snoopsy/hexgrad-Kokoro-82M"", ""xofal40967/hexgrad-Kokoro-82M"", ""fatwang2/hexgrad-Kokoro-82M"", ""Aranzo/hexgrad-Kokoro-82M"", ""vikaswakde/hexgrad-Kokoro-82M"", ""sajidanwar/hexgrad-Kokoro-82M"", ""jallenjia/Kokoro-TTS-Zero"", ""Abdalmohsen/hexgrad-Kokoro-82M"", ""Houkii/hexgrad-Kokoro-82M"", ""Krass/hexgrad-Kokoro-82M"", ""Toby12woolsey/hexgrad-Kokoro-82M"", ""Rybackmasikalass1998/hexgrad-Kokoro-82M"", ""AmpleBasis/Kokoro-TTS-Zero"", ""IamNotChris/hexgrad-Kokoro-82M"", ""Scorpjr9/hexgrad-Kokoro-82M"", ""pengaturan/hexgrad-Kokoro-82M"", ""Jay1012/hexgrad-Kokoro-82M"", ""Sinisterj12/hexgrad-Kokoro-82M"", ""Artifex1/hexgrad-Kokoro-82M"", ""Nialluytrruuee/hexgrad-Kokoro-82M"", ""nwent/hexgrad-Kokoro-82M"", ""alperall/hexgrad-Kokoro-82M"", ""cheshireterminal/kokottsolana"", ""jhay555/hexgrad-Kokoro-82M"", ""jacobwjx/hexgrad-Kokoro-82M"", ""eddiego2017/hexgrad-Kokoro-82M"", ""prembhai/Voice-Generator"", ""fdsgfdvbf/hexgrad-Kokoro-82M"", ""sahilviolet/hexgrad-Kokoro-82M"", ""Weswise/hexgrad-Kokoro-82M"", ""MYY007/hexgrad-Kokoro-82M"", ""mediaguild/Text2Speech"", ""marsyao/Kokoro-TTS"", ""doyaf99486/Kokoro-TTS"", ""eric-cli/Kokoro-TTS-Local"", ""un4b0mer/hexgrad-Kokoro-82M"", ""Maznichka/hexgrad-Kokoro-82M"", ""gudao119/hexgrad-Kokoro-82M"", ""Neyvan001/Ney007"", ""versantus/hexgrad-Kokoro-82M"", ""xMPB/hexgrad-Kokoro-82M"", ""Lokya1/hexgrad-Kokoro-82M"", ""wore99/hexgrad-Kokoro-82M""], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-04-10 18:12:48+00:00"", ""cardData"": ""base_model:\n- yl4579/StyleTTS2-LJSpeech\nlanguage:\n- en\nlicense: apache-2.0\npipeline_tag: text-to-speech"", ""transformersInfo"": null, ""_id"": ""676ca1388118866906abbd7c"", ""modelId"": ""hexgrad/Kokoro-82M"", ""usedStorage"": 1234555949}",0,"https://huggingface.co/hexgrad/Kokoro-82M-v1.1-zh, https://huggingface.co/ThornoDen/Sonya, https://huggingface.co/Oscuridad/aaaa, https://huggingface.co/chernikov1/test, https://huggingface.co/GabrielMedinaTorres/genshin, https://huggingface.co/Khanhho/mai, https://huggingface.co/Hasani-ali-reza/Iran, https://huggingface.co/Aicraftar/Tharo.G-Neo, https://huggingface.co/maj666/test1, https://huggingface.co/Princehart1234/Sonia, https://huggingface.co/umersattar/girl, https://huggingface.co/David856412/David89675, https://huggingface.co/crossyroadgame/unblocked",13,"https://huggingface.co/Aicraftar/Tharo.G-Eco, https://huggingface.co/9w092wi/Photos, https://huggingface.co/budxeedev/akseAI, https://huggingface.co/Farzinam30/Manpower, https://huggingface.co/Carlos728/Tinder, https://huggingface.co/alfered2000/anna, https://huggingface.co/Maryyssa998/Model998, https://huggingface.co/Sanchesavg1/Elona, https://huggingface.co/Kooshaghaedi/Koosha",9,"https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX, https://huggingface.co/Remsky/kokoro-82m-mirror, https://huggingface.co/onnx-community/Kokoro-82M-ONNX, https://huggingface.co/NeuML/kokoro-fp16-onnx, https://huggingface.co/NeuML/kokoro-int8-onnx, https://huggingface.co/anuragsingh922/VocRT, https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX-timestamped, https://huggingface.co/NeuML/kokoro-base-onnx, https://huggingface.co/adrianlyjak/kokoro-onnx",9,,0,"NeuralFalcon/KOKORO-TTS-1.0, NeuralFalcon/Kokoro-TTS, Pendrokar/TTS-Spaces-Arena, RORONovaLuffy/hexgrad-Kokoro-82M, Remsky/Kokoro-TTS-Zero, RobinsAIWorld/Kokoro-TTS-cpu, TTS-AGI/TTS-Arena, Wismut/Kokoro_TTS_Compare, ginipick/DeepSeekR1-LIVE, hexgrad/Kokoro-TTS, huggingface/InferenceSupport/discussions/63, mozilla-ai/document-to-podcast, sagar007/DeepSeekR1_Search",13
+https://huggingface.co/hexgrad/Kokoro-82M-v1.1-zh,N/A,N/A,1,,0,,0,,0,,0,,0
+ThornoDen/Sonya,"---
+license: cc-by-nc-nd-4.0
+datasets:
+- fka/awesome-chatgpt-prompts
+language:
+- ab
+metrics:
+- bleu
+- character
+base_model:
+- hexgrad/Kokoro-82M
+new_version: deepseek-ai/DeepSeek-R1
+pipeline_tag: text-classification
+library_name: fairseq
+---","{""id"": ""ThornoDen/Sonya"", ""author"": ""ThornoDen"", ""sha"": ""200ae5dece5a776986e2fb69cb111b4fe42b9a8d"", ""last_modified"": ""2025-01-27 22:57:03+00:00"", ""created_at"": ""2025-01-27 22:45:37+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 1, ""library_name"": ""fairseq"", ""gguf"": null, ""inference"": null, ""tags"": [""fairseq"", ""text-classification"", ""ab"", ""dataset:fka/awesome-chatgpt-prompts"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""license:cc-by-nc-nd-4.0"", ""region:us""], ""pipeline_tag"": ""text-classification"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlanguage:\n- ab\nlibrary_name: fairseq\nlicense: cc-by-nc-nd-4.0\nmetrics:\n- bleu\n- character\npipeline_tag: text-classification\nnew_version: deepseek-ai/DeepSeek-R1"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='Screenshot_2025-01-17-02-11-11-22_68e74cc0265513bba3f4cf8e2c9891fe.jpg', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-01-27 22:57:03+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlanguage:\n- ab\nlibrary_name: fairseq\nlicense: cc-by-nc-nd-4.0\nmetrics:\n- bleu\n- character\npipeline_tag: text-classification\nnew_version: deepseek-ai/DeepSeek-R1"", ""transformersInfo"": null, ""_id"": ""67980c91e05ca91d7e01c1a4"", ""modelId"": ""ThornoDen/Sonya"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=ThornoDen/Sonya&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5BThornoDen%2FSonya%5D(%2FThornoDen%2FSonya)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+Oscuridad/aaaa,"---
+license: unknown
+datasets:
+- HumanLLMs/Human-Like-DPO-Dataset
+language:
+- aa
+metrics:
+- bleurt
+base_model:
+- hexgrad/Kokoro-82M
+new_version: hexgrad/Kokoro-82M
+pipeline_tag: audio-to-audio
+library_name: asteroid
+tags:
+- music
+---","{""id"": ""Oscuridad/aaaa"", ""author"": ""Oscuridad"", ""sha"": ""fd4abf3a33e5b35c7ceccfec6201f88caabf9b8d"", ""last_modified"": ""2025-01-21 02:09:19+00:00"", ""created_at"": ""2025-01-21 02:07:03+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": ""asteroid"", ""gguf"": null, ""inference"": null, ""tags"": [""asteroid"", ""music"", ""audio-to-audio"", ""aa"", ""dataset:HumanLLMs/Human-Like-DPO-Dataset"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""license:unknown"", ""region:us""], ""pipeline_tag"": ""audio-to-audio"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- HumanLLMs/Human-Like-DPO-Dataset\nlanguage:\n- aa\nlibrary_name: asteroid\nlicense: unknown\nmetrics:\n- bleurt\npipeline_tag: audio-to-audio\ntags:\n- music\nnew_version: hexgrad/Kokoro-82M"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-01-21 02:09:19+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- HumanLLMs/Human-Like-DPO-Dataset\nlanguage:\n- aa\nlibrary_name: asteroid\nlicense: unknown\nmetrics:\n- bleurt\npipeline_tag: audio-to-audio\ntags:\n- music\nnew_version: hexgrad/Kokoro-82M"", ""transformersInfo"": null, ""_id"": ""678f01474253b8500c91f6dd"", ""modelId"": ""Oscuridad/aaaa"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=Oscuridad/aaaa&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5BOscuridad%2Faaaa%5D(%2FOscuridad%2Faaaa)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+chernikov1/test,"---
+license: apache-2.0
+base_model:
+- hexgrad/Kokoro-82M
+pipeline_tag: image-to-3d
+---
+
+# Model Card for Model ID
+
+<!-- Provide a quick summary of what the model is/does. -->
+
+This modelcard aims to be a base template for new models. It has been generated using [this raw template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/modelcard_template.md?plain=1).
+
+## Model Details
+
+### Model Description
+
+<!-- Provide a longer summary of what this model is. -->
+
+
+
+- **Developed by:** [More Information Needed]
+- **Funded by [optional]:** [More Information Needed]
+- **Shared by [optional]:** [More Information Needed]
+- **Model type:** [More Information Needed]
+- **Language(s) (NLP):** [More Information Needed]
+- **License:** [More Information Needed]
+- **Finetuned from model [optional]:** [More Information Needed]
+
+### Model Sources [optional]
+
+<!-- Provide the basic links for the model. -->
+
+- **Repository:** [More Information Needed]
+- **Paper [optional]:** [More Information Needed]
+- **Demo [optional]:** [More Information Needed]
+
+## Uses
+
+<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
+
+### Direct Use
+
+<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+
+[More Information Needed]
+
+### Downstream Use [optional]
+
+<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
+
+[More Information Needed]
+
+### Out-of-Scope Use
+
+<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
+
+[More Information Needed]
+
+## Bias, Risks, and Limitations
+
+<!-- This section is meant to convey both technical and sociotechnical limitations. -->
+
+[More Information Needed]
+
+### Recommendations
+
+<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
+
+Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
+
+## How to Get Started with the Model
+
+Use the code below to get started with the model.
+
+[More Information Needed]
+
+## Training Details
+
+### Training Data
+
+<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
+
+[More Information Needed]
+
+### Training Procedure
+
+<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
+
+#### Preprocessing [optional]
+
+[More Information Needed]
+
+
+#### Training Hyperparameters
+
+- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
+
+#### Speeds, Sizes, Times [optional]
+
+<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
+
+[More Information Needed]
+
+## Evaluation
+
+<!-- This section describes the evaluation protocols and provides the results. -->
+
+### Testing Data, Factors & Metrics
+
+#### Testing Data
+
+<!-- This should link to a Dataset Card if possible. -->
+
+[More Information Needed]
+
+#### Factors
+
+<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
+
+[More Information Needed]
+
+#### Metrics
+
+<!-- These are the evaluation metrics being used, ideally with a description of why. -->
+
+[More Information Needed]
+
+### Results
+
+[More Information Needed]
+
+#### Summary
+
+
+
+## Model Examination [optional]
+
+<!-- Relevant interpretability work for the model goes here -->
+
+[More Information Needed]
+
+## Environmental Impact
+
+<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
+
+Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
+
+- **Hardware Type:** [More Information Needed]
+- **Hours used:** [More Information Needed]
+- **Cloud Provider:** [More Information Needed]
+- **Compute Region:** [More Information Needed]
+- **Carbon Emitted:** [More Information Needed]
+
+## Technical Specifications [optional]
+
+### Model Architecture and Objective
+
+[More Information Needed]
+
+### Compute Infrastructure
+
+[More Information Needed]
+
+#### Hardware
+
+[More Information Needed]
+
+#### Software
+
+[More Information Needed]
+
+## Citation [optional]
+
+<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
+
+**BibTeX:**
+
+[More Information Needed]
+
+**APA:**
+
+[More Information Needed]
+
+## Glossary [optional]
+
+<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
+
+[More Information Needed]
+
+## More Information [optional]
+
+[More Information Needed]
+
+## Model Card Authors [optional]
+
+[More Information Needed]
+
+## Model Card Contact
+
+[More Information Needed]","{""id"": ""chernikov1/test"", ""author"": ""chernikov1"", ""sha"": ""12f21b35b05a92e37485bbbd9fa46994d0fa4f1a"", ""last_modified"": ""2025-01-23 06:18:43+00:00"", ""created_at"": ""2025-01-23 06:14:43+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": null, ""gguf"": null, ""inference"": null, ""tags"": [""image-to-3d"", ""arxiv:1910.09700"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""license:apache-2.0"", ""region:us""], ""pipeline_tag"": ""image-to-3d"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\nlicense: apache-2.0\npipeline_tag: image-to-3d"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-01-23 06:18:43+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\nlicense: apache-2.0\npipeline_tag: image-to-3d"", ""transformersInfo"": null, ""_id"": ""6791de532cb4bcc37396e8cb"", ""modelId"": ""chernikov1/test"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=chernikov1/test&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5Bchernikov1%2Ftest%5D(%2Fchernikov1%2Ftest)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+GabrielMedinaTorres/genshin,"---
+language:
+- es
+base_model:
+- hexgrad/Kokoro-82M
+---","{""id"": ""GabrielMedinaTorres/genshin"", ""author"": ""GabrielMedinaTorres"", ""sha"": ""df4d5fc1fc115e416e3976af3b80dbce40e11c89"", ""last_modified"": ""2025-01-24 12:43:40+00:00"", ""created_at"": ""2025-01-24 12:43:07+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": null, ""gguf"": null, ""inference"": null, ""tags"": [""es"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""region:us""], ""pipeline_tag"": null, ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\nlanguage:\n- es"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-01-24 12:43:40+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\nlanguage:\n- es"", ""transformersInfo"": null, ""_id"": ""67938adb82eb457aba83de02"", ""modelId"": ""GabrielMedinaTorres/genshin"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=GabrielMedinaTorres/genshin&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5BGabrielMedinaTorres%2Fgenshin%5D(%2FGabrielMedinaTorres%2Fgenshin)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+Khanhho/mai,"---
+language:
+- vi
+base_model:
+- hexgrad/Kokoro-82M
+---","{""id"": ""Khanhho/mai"", ""author"": ""Khanhho"", ""sha"": ""f3b7740350fbc7c69baed0e9c2c0a4d8c00a16a5"", ""last_modified"": ""2025-01-24 16:37:59+00:00"", ""created_at"": ""2025-01-24 16:36:17+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": null, ""gguf"": null, ""inference"": null, ""tags"": [""vi"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""region:us""], ""pipeline_tag"": null, ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\nlanguage:\n- vi"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-01-24 16:37:59+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\nlanguage:\n- vi"", ""transformersInfo"": null, ""_id"": ""6793c18139a0cc8662af3560"", ""modelId"": ""Khanhho/mai"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=Khanhho/mai&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5BKhanhho%2Fmai%5D(%2FKhanhho%2Fmai)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+Hasani-ali-reza/Iran,"---
+license: openrail
+datasets:
+- fka/awesome-chatgpt-prompts
+metrics:
+- bleu
+base_model:
+- hexgrad/Kokoro-82M
+new_version: deepseek-ai/DeepSeek-R1
+pipeline_tag: question-answering
+library_name: asteroid
+tags:
+- biology
+---","{""id"": ""Hasani-ali-reza/Iran"", ""author"": ""Hasani-ali-reza"", ""sha"": ""2691864b9f384ebe9c1215b0e4abf97e5bcdfadf"", ""last_modified"": ""2025-01-28 11:13:54+00:00"", ""created_at"": ""2025-01-28 11:12:11+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": ""asteroid"", ""gguf"": null, ""inference"": null, ""tags"": [""asteroid"", ""biology"", ""question-answering"", ""dataset:fka/awesome-chatgpt-prompts"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""license:openrail"", ""region:us""], ""pipeline_tag"": ""question-answering"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlibrary_name: asteroid\nlicense: openrail\nmetrics:\n- bleu\npipeline_tag: question-answering\ntags:\n- biology\nnew_version: deepseek-ai/DeepSeek-R1"", ""widget_data"": [{""text"": ""Where do I live?"", ""context"": ""My name is Wolfgang and I live in Berlin""}, {""text"": ""Where do I live?"", ""context"": ""My name is Sarah and I live in London""}, {""text"": ""What's my name?"", ""context"": ""My name is Clara and I live in Berkeley.""}, {""text"": ""Which name is also used to describe the Amazon rainforest in English?"", ""context"": ""The Amazon rainforest (Portuguese: Floresta Amaz\u00f4nica or Amaz\u00f4nia; Spanish: Selva Amaz\u00f3nica, Amazon\u00eda or usually Amazonia; French: For\u00eat amazonienne; Dutch: Amazoneregenwoud), also known in English as Amazonia or the Amazon Jungle, is a moist broadleaf forest that covers most of the Amazon basin of South America. This basin encompasses 7,000,000 square kilometres (2,700,000 sq mi), of which 5,500,000 square kilometres (2,100,000 sq mi) are covered by the rainforest. This region includes territory belonging to nine nations. The majority of the forest is contained within Brazil, with 60% of the rainforest, followed by Peru with 13%, Colombia with 10%, and with minor amounts in Venezuela, Ecuador, Bolivia, Guyana, Suriname and French Guiana. States or departments in four nations contain \""Amazonas\"" in their names. The Amazon represents over half of the planet's remaining rainforests, and comprises the largest and most biodiverse tract of tropical rainforest in the world, with an estimated 390 billion individual trees divided into 16,000 species.""}], ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-01-28 11:13:54+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlibrary_name: asteroid\nlicense: openrail\nmetrics:\n- bleu\npipeline_tag: question-answering\ntags:\n- biology\nnew_version: deepseek-ai/DeepSeek-R1"", ""transformersInfo"": null, ""_id"": ""6798bb8b39bf18bcca5b59e3"", ""modelId"": ""Hasani-ali-reza/Iran"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=Hasani-ali-reza/Iran&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5BHasani-ali-reza%2FIran%5D(%2FHasani-ali-reza%2FIran)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+https://huggingface.co/Aicraftar/Tharo.G-Neo,N/A,N/A,1,,0,,0,,0,,0,,0
+maj666/test1,"---
+datasets:
+- fka/awesome-chatgpt-prompts
+language:
+- ar
+metrics:
+- bertscore
+base_model:
+- hexgrad/Kokoro-82M
+new_version: deepseek-ai/DeepSeek-R1
+pipeline_tag: video-text-to-text
+library_name: allennlp
+---","{""id"": ""maj666/test1"", ""author"": ""maj666"", ""sha"": ""e828105ce54d949ca7d19772ababf26df8b28993"", ""last_modified"": ""2025-02-17 15:23:22+00:00"", ""created_at"": ""2025-02-17 15:18:19+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": ""allennlp"", ""gguf"": null, ""inference"": null, ""tags"": [""allennlp"", ""video-text-to-text"", ""ar"", ""dataset:fka/awesome-chatgpt-prompts"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""region:us""], ""pipeline_tag"": ""video-text-to-text"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlanguage:\n- ar\nlibrary_name: allennlp\nmetrics:\n- bertscore\npipeline_tag: video-text-to-text\nnew_version: deepseek-ai/DeepSeek-R1"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-02-17 15:23:22+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlanguage:\n- ar\nlibrary_name: allennlp\nmetrics:\n- bertscore\npipeline_tag: video-text-to-text\nnew_version: deepseek-ai/DeepSeek-R1"", ""transformersInfo"": null, ""_id"": ""67b3533b730b84a4b58b57d2"", ""modelId"": ""maj666/test1"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=maj666/test1&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5Bmaj666%2Ftest1%5D(%2Fmaj666%2Ftest1)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+Princehart1234/Sonia,"---
+license: mit
+datasets:
+- fka/awesome-chatgpt-prompts
+language:
+- ak
+metrics:
+- bleurt
+base_model:
+- hexgrad/Kokoro-82M
+new_version: deepseek-ai/Janus-Pro-7B
+pipeline_tag: zero-shot-classification
+library_name: asteroid
+---","{""id"": ""Princehart1234/Sonia"", ""author"": ""Princehart1234"", ""sha"": ""faa426d12f9a9ab91e84f02cf24bc4309583b715"", ""last_modified"": ""2025-02-21 11:58:14+00:00"", ""created_at"": ""2025-02-21 11:56:35+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": ""asteroid"", ""gguf"": null, ""inference"": null, ""tags"": [""asteroid"", ""zero-shot-classification"", ""ak"", ""dataset:fka/awesome-chatgpt-prompts"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""license:mit"", ""region:us""], ""pipeline_tag"": ""zero-shot-classification"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlanguage:\n- ak\nlibrary_name: asteroid\nlicense: mit\nmetrics:\n- bleurt\npipeline_tag: zero-shot-classification\nnew_version: deepseek-ai/Janus-Pro-7B"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-02-21 11:58:14+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- fka/awesome-chatgpt-prompts\nlanguage:\n- ak\nlibrary_name: asteroid\nlicense: mit\nmetrics:\n- bleurt\npipeline_tag: zero-shot-classification\nnew_version: deepseek-ai/Janus-Pro-7B"", ""transformersInfo"": null, ""_id"": ""67b869f3c5dfba0d121be754"", ""modelId"": ""Princehart1234/Sonia"", ""usedStorage"": 0}",1,,0,,0,,0,,0,,0
+umersattar/girl,N/A,N/A,1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=umersattar/girl&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5Bumersattar%2Fgirl%5D(%2Fumersattar%2Fgirl)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+David856412/David89675,"---
+datasets:
+- FreedomIntelligence/medical-o1-reasoning-SFT
+language:
+- ae
+metrics:
+- bleu
+base_model:
+- hexgrad/Kokoro-82M
+new_version: Wan-AI/Wan2.1-T2V-14B
+pipeline_tag: translation
+---","{""id"": ""David856412/David89675"", ""author"": ""David856412"", ""sha"": ""437e4756d5d3dd8a8fdb02b35bb3b34ff589e4d6"", ""last_modified"": ""2025-03-04 02:12:50+00:00"", ""created_at"": ""2025-03-04 02:10:24+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": null, ""gguf"": null, ""inference"": null, ""tags"": [""translation"", ""ae"", ""dataset:FreedomIntelligence/medical-o1-reasoning-SFT"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""region:us""], ""pipeline_tag"": ""translation"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- FreedomIntelligence/medical-o1-reasoning-SFT\nlanguage:\n- ae\nmetrics:\n- bleu\npipeline_tag: translation\nnew_version: Wan-AI/Wan2.1-T2V-14B"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-03-04 02:12:50+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- FreedomIntelligence/medical-o1-reasoning-SFT\nlanguage:\n- ae\nmetrics:\n- bleu\npipeline_tag: translation\nnew_version: Wan-AI/Wan2.1-T2V-14B"", ""transformersInfo"": null, ""_id"": ""67c6611090a284952e34c619"", ""modelId"": ""David856412/David89675"", ""usedStorage"": 0}",1,,0,,0,,0,,0,huggingface/InferenceSupport/discussions/new?title=David856412/David89675&description=React%20to%20this%20comment%20with%20an%20emoji%20to%20vote%20for%20%5BDavid856412%2FDavid89675%5D(%2FDavid856412%2FDavid89675)%20to%20be%20supported%20by%20Inference%20Providers.%0A%0A(optional)%20Which%20providers%20are%20you%20interested%20in%3F%20(Novita%2C%20Hyperbolic%2C%20Together%E2%80%A6)%0A,1
+crossyroadgame/unblocked,"---
+license: openrail
+datasets:
+- facebook/natural_reasoning
+language:
+- af
+metrics:
+- bertscore
+base_model:
+- hexgrad/Kokoro-82M
+new_version: perplexity-ai/r1-1776
+pipeline_tag: sentence-similarity
+library_name: flair
+tags:
+- not-for-all-audiences
+- code
+- legal
+---","{""id"": ""crossyroadgame/unblocked"", ""author"": ""crossyroadgame"", ""sha"": ""79fcebe6cd5b99017bffa6b684676c1ea6a14774"", ""last_modified"": ""2025-03-04 08:13:15+00:00"", ""created_at"": ""2025-03-04 08:12:04+00:00"", ""private"": false, ""gated"": false, ""disabled"": false, ""downloads"": 0, ""downloads_all_time"": null, ""likes"": 0, ""library_name"": ""flair"", ""gguf"": null, ""inference"": null, ""tags"": [""flair"", ""not-for-all-audiences"", ""code"", ""legal"", ""sentence-similarity"", ""af"", ""dataset:facebook/natural_reasoning"", ""base_model:hexgrad/Kokoro-82M"", ""base_model:finetune:hexgrad/Kokoro-82M"", ""license:openrail"", ""region:us""], ""pipeline_tag"": ""sentence-similarity"", ""mask_token"": null, ""trending_score"": null, ""card_data"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- facebook/natural_reasoning\nlanguage:\n- af\nlibrary_name: flair\nlicense: openrail\nmetrics:\n- bertscore\npipeline_tag: sentence-similarity\ntags:\n- not-for-all-audiences\n- code\n- legal\nnew_version: perplexity-ai/r1-1776"", ""widget_data"": null, ""model_index"": null, ""config"": null, ""transformers_info"": null, ""siblings"": [""RepoSibling(rfilename='.gitattributes', size=None, blob_id=None, lfs=None)"", ""RepoSibling(rfilename='README.md', size=None, blob_id=None, lfs=None)""], ""spaces"": [], ""safetensors"": null, ""security_repo_status"": null, ""lastModified"": ""2025-03-04 08:13:15+00:00"", ""cardData"": ""base_model:\n- hexgrad/Kokoro-82M\ndatasets:\n- facebook/natural_reasoning\nlanguage:\n- af\nlibrary_name: flair\nlicense: openrail\nmetrics:\n- bertscore\npipeline_tag: sentence-similarity\ntags:\n- not-for-all-audiences\n- code\n- legal\nnew_version: perplexity-ai/r1-1776"", ""transformersInfo"": null, ""_id"": ""67c6b5d43f47007858d912c9"", ""modelId"": ""crossyroadgame/unblocked"", ""usedStorage"": 0}",1,,0,,0,,0,,0,,0
