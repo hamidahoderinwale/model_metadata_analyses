@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd datasets || exit
-
 for json in ./*.json; do
   # Skip if no JSON files are found
   [[ -e "$json" ]] || { echo "No .json files found."; break; }
