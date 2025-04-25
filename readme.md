@@ -21,4 +21,4 @@ Once you've made a dataset, you could look into querying the data and try to:
 
 ## [Dataset Card](https://sites.research.google/datacardsplaybook/) [TK]
 
-##[Serialize w/ Parquet](https://parquet.apache.org/)
+## [Serialize w/ Parquet](https://parquet.apache.org/)
