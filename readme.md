@@ -20,3 +20,5 @@ Once you've made a dataset, you could look into querying the data and try to:
 - Libraries Dataset (WIP): https://docs.google.com/spreadsheets/d/1tI67UpqRyy7IEZNlBvIKanvqw5trYUxMnLNtufRQ7o8/edit?usp=sharing
 
 ## [Dataset Card](https://sites.research.google/datacardsplaybook/) [TK]
+
+##[Serialize w/ Parquet](https://parquet.apache.org/)
