@@ -4,11 +4,14 @@ import matplotlib.pyplot as plt
 from Bio import Phylo
 from Bio.Phylo.BaseTree import Clade, Tree
 
-# Load dataset
-csv_as_input = input("give link to model tree csv: ")
-filename = csv_as_input.split('_finetunes_')[0] 
-df = pd.read_csv(csv_as_input)
-df['children'] = df['children'].apply(ast.literal_eval)
+# Load and prepare the dataset
+input_csv = input("Enter link to CSV: ")
+df = pd.read_csv(input_csv)
+# Correct handling of 'children' column
+df['children'] = df['children'].fillna("").apply(lambda x: [url.strip() for url in x.split(",") if url.strip()])
+file_name = input_csv.split("//")[-1]
+
+# Create a function to build the tree
 
 def build_phylo_tree_from_dfs(df):
     clade_map = {row['model_id']: Clade(name=row['model_id']) for _, row in df.iterrows()}
@@ -54,6 +57,7 @@ ax.set_axis_off()
 plt.tight_layout()
 plt.show()
 
-fig.savefig(filename, dpi=150, bbox_inches='tight')
+# Save
+fig.savefig(f"{file_name}.png", dpi=150, bbox_inches='tight')
 
-print(f"Tree visualization {filename}")
+print(f"Saved: {file_name}.png")
