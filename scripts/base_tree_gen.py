@@ -1,3 +1,6 @@
+# Original tree scraping script without page limit
+# If number of models for a model category is >2970, the backoff script will cause the script to end
+# It's strongly suggested to use `[final]_truncated_multiple.py`
 
 import requests
 import pandas as pd
