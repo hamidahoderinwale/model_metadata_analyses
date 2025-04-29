@@ -2,27 +2,45 @@
 
 import pandas as pd
 import glob
+import os
+from tqdm import tqdm
 
-# Set the path to your main datasets folder
-path = "/v2_datasets"
+# Set your folder directly
+path = "_path_to_folder_with_csvs"
 
-# Find all CSV files recursively in all subfolders
-all_files = glob.glob(path + '/**/*.csv', recursive=True)
+# Find all CSV files (non-recursive, or recursive if needed)
+all_files = glob.glob(os.path.join(path, '*.csv'))
 all_files.sort()
 
-combined_df = pd.DataFrame()
+if not all_files:
+    print(" No CSV files found. Please check the folder path.")
+    exit(1)
 
-for i, fname in enumerate(all_files):
-    if i == 0:
-        # Read the first file with headers
+print(f" Found {len(all_files)} CSV files. Merging with single header...")
+
+# Initialize the combined DataFrame
+combined_df = None
+
+for i, fname in enumerate(tqdm(all_files, desc="Merging CSVs", unit="file")):
+    try:
         temp_df = pd.read_csv(fname)
-    else:
-        # Read subsequent files, skipping their headers
-        temp_df = pd.read_csv(fname, header=0)
-    combined_df = pd.concat([combined_df, temp_df], ignore_index=True)
+        
+        # Optionally track the source file (you can remove this line if not needed)
+        temp_df['source_file'] = os.path.basename(fname)
 
-# Drop rows that are completely empty
-combined_df = combined_df.dropna(how='all')
+        if combined_df is None:
+            combined_df = temp_df
+        else:
+            combined_df = pd.concat([combined_df, temp_df], ignore_index=True)
 
-# Save to output file
-combined_df.to_csv('joined.csv', index=False)
+    except Exception as e:
+        print(f"Skipped {fname}: {e}")
+
+# Save outputs
+csv_output = '_all_model_trees.csv'
+parquet_output = '_all_model_trees.parquet'
+
+combined_df.to_csv(csv_output, index=False)
+combined_df.to_parquet(parquet_output, index=False)
+
+print(f"Done! Saved merged dataset as '{csv_output}' and '{parquet_output}'.")
