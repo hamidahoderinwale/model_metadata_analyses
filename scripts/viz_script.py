@@ -1,3 +1,5 @@
+# Takes in csv of models (ids) to visualize tree data as phylogenetic trees
+
 import pandas as pd
 import ast
 import matplotlib.pyplot as plt
