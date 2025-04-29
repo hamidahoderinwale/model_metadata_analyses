@@ -1,4 +1,4 @@
-# Takes in CSV of model, has page limit (100), and relaxed  link pattern
+# Takes a csv of a list of models (e.g. from `get_top_models.py` and return csv and json of their trees)
 
 import requests
 import pandas as pd
