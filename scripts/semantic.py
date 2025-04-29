@@ -1,4 +1,5 @@
-# tokenized model card data as json with dictionary and list of tokens with frequency
+# Outputs tokenized model card data as json with dictionary and list of tokens with frequency
+
 import numpy as np
 import pandas as pd
 import re
