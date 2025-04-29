@@ -1,4 +1,4 @@
-# Script to join CSVs.
+# Script to join csvs into one csv with all scrapped trees
 
 import pandas as pd
 import glob
