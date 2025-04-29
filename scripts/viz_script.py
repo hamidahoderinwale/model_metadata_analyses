@@ -13,8 +13,7 @@ df = pd.read_csv(input_csv)
 df['children'] = df['children'].fillna("").apply(lambda x: [url.strip() for url in x.split(",") if url.strip()])
 file_name = input_csv.split("//")[-1]
 
-# Create a function to build the tree
-
+# Builds tree
 def build_phylo_tree_from_dfs(df):
     clade_map = {row['model_id']: Clade(name=row['model_id']) for _, row in df.iterrows()}
     parent_links = {}
