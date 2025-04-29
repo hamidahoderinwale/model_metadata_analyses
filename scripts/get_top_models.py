@@ -5,12 +5,12 @@ from pathlib import Path
 
 # Initialize API
 api = HfApi()
-time = datetime.datetime.now().strftime("m%d%y_%H%M%S")  # Fixed time format (removed invalid `%_`)
+time = datetime.datetime.now().strftime("m%d%y_%H%M%S")   # EST timezone
 # Fetch models (sorted by likes, excluding gated by default)
 full_model_list = api.list_models(
     sort="likes",
     direction="-1",
-    limit=15000,  # Explicitly set a limit
+    limit=1205,  # Set limit
 )
 
 # Separate gated and non-gated models
@@ -22,8 +22,6 @@ for model in full_model_list:
         gated_models.append(model)
     else:
         non_gated_models.append(model)
-
-
 
 # Save non-gated models to CSV
 df_non_gated = pd.DataFrame(non_gated_models)
