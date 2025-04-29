@@ -1,4 +1,5 @@
 # Takes a csv of a list of models (e.g. from `get_top_models.py` and return csv and json of their trees)
+# has page limit of 100 because data is not available for models beyond those pages (max. is 2970 (30*99) for any model category (i.e. finetunes, adapters, model merges, quantizations)
 
 import requests
 import pandas as pd
