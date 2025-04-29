@@ -12,6 +12,7 @@ Once you've made a dataset, you could look into querying the data and try to:
 - Follow parent_model links to trace specific lineages
 - Group by base_model and count derivatives to measure influence
 
+  [OneDrive](https://mcgill-my.sharepoint.com/:f:/g/personal/hamidah_oderinwale_mail_mcgill_ca/EjDp-Eo4PGdKtLxK3H84MHAB8TF1fwv0g5PTZnGu3JBa5Q?e=GaCW1Q)
 
 ## [Dataset Card](https://sites.research.google/datacardsplaybook/) [TK]
 
