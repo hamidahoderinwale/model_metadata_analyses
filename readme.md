@@ -12,6 +12,29 @@ Once you've made a dataset, you could look into querying the data and try to:
 - Follow parent_model links to trace specific lineages
 - Group by base_model and count derivatives to measure influence
 
+## Environment Setup
+
+Before setting up the environment, ensure you have:
+- Python 3.8 or higher installed
+- pip package manager (usually included with Python)
+Install the required dependencies:
+- `pip install -r requirements.txt`
+### Updating Requirements
+
+If you're adding this project to an existing environment or need to update the requirements:
+
+1. First activate your virtual environment:
+   ```bash
+   # For venv:
+   source venv/bin/activate  # Linux/Mac
+   .\venv\Scripts\activate  # Windows
+
+   # For Conda:
+   conda activate your_env_name
+
+2. Then generate an updated requirements file:
+ `pip freeze > requirements.txt`
+
   [OneDrive](https://mcgill-my.sharepoint.com/:f:/g/personal/hamidah_oderinwale_mail_mcgill_ca/EjDp-Eo4PGdKtLxK3H84MHAB8TF1fwv0g5PTZnGu3JBa5Q?e=GaCW1Q)
 
 ## [Dataset Card](https://sites.research.google/datacardsplaybook/) [TK]
