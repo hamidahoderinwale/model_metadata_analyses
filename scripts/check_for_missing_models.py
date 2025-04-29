@@ -1,3 +1,5 @@
+# Script to check for missing models from folder with scrapped model trees as csvs
+
 import os
 import csv
 import pandas as pd
