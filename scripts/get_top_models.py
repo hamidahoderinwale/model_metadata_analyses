@@ -1,39 +1,88 @@
-# Call HF Hub API to get top models for tree gen
+# Call HF Hub API to get top models for tree generation and classify them as gated or ungated.
 
-import pandas as pd
-import datetime
 from huggingface_hub import HfApi
-from pathlib import Path
+from bs4 import BeautifulSoup
+import pandas as pd
+import os
+import datetime
+import requests
 
-# Initialize API
+# --- Setup ---
+# Initialize Hugging Face API client and prepare output directory with timestamped folder
 api = HfApi()
-time = datetime.datetime.now().strftime("m%d%y_%H%M%S")   # EST timezone
-# Fetch models (sorted by likes, excluding gated by default)
-full_model_list = api.list_models(
-    sort="likes",
-    direction="-1",
-    limit=1205,  # Set limit
-)
+limit = 1723818  # Set upper limit for models to fetch (max possible on the Hub)
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+base_dir = f"model_scan_{timestamp}"
+os.makedirs(base_dir, exist_ok=True)
 
-# Separate gated and non-gated models
-non_gated_models = []
-gated_models = []
+# --- Initialize tracking variables ---
+gated_count = 0
+ungated_count = 0
+all_model_records = []  # List to store all scanned models
+chunk_index = 0
+batch = []  # Temporary batch for chunked CSV saving
 
-for model in full_model_list:
-    if getattr(model, 'gated', False):  # Check if model is gated
-        gated_models.append(model)
-    else:
-        non_gated_models.append(model)
+# --- Paginated model listing generator from HF Hub ---
+model_generator = api.list_models(full=True, limit=limit)
 
-# Save non-gated models to CSV
-df_non_gated = pd.DataFrame(non_gated_models)
-non_gated_file = f"{len(non_gated_models)}non_gated.csv"
-df_non_gated.to_csv(non_gated_file, index=True)  # `index=True` saves row numbers
+try:
+    # --- Iterate over all returned models ---
+    for i, model in enumerate(model_generator, 1):
+        is_gated = getattr(model, "gated", False)
+        
+        # Append model record to current batch
+        batch.append({
+            "model_id": model.id,
+            "gated": is_gated
+        })
 
-# Save gated models to CSV (optional)
-df_gated = pd.DataFrame(gated_models)
-gated_file = f"gated_models_{time}.csv"
-df_gated.to_csv(gated_file, index=True)
+        # Update counters
+        if is_gated:
+            gated_count += 1
+        else:
+            ungated_count += 1
 
-print(f"Non-gated models saved to: {Path(non_gated_file).resolve()}")
-print(f"Gated models saved to: {Path(gated_file).resolve()}")
+        # Save each full batch as a chunked CSV
+        if i % limit == 0:
+            df = pd.DataFrame(batch)
+            df.to_csv(f"{base_dir}/chunk_{chunk_index:04d}.csv", index=False)
+            print(f"Saved chunk {chunk_index:04d} with {len(batch)} models")
+            all_model_records.extend(batch)
+            batch = []
+            chunk_index += 1
+
+    # --- Save any remaining models that didn't fill a full batch ---
+    if batch:
+        df = pd.DataFrame(batch)
+        df.to_csv(f"{base_dir}/chunk_{chunk_index:04d}.csv", index=False)
+        print(f"Saved final chunk {chunk_index:04d} with {len(batch)} models")
+        all_model_records.extend(batch)
+
+except KeyboardInterrupt:
+    print("\nInterrupted. Saving current state...")
+
+# --- Save summary CSVs with all model records and metadata ---
+df_all = pd.DataFrame(all_model_records)
+
+# NOTE: Ensure this function exists or define it. Otherwise, remove or mock:
+# total_on_hub = get_total_model_count()
+# For now, we'll comment it out to avoid an error.
+# Replace with an actual API query if needed.
+
+# Save summary statistics about the scan
+summary_df = pd.DataFrame([{
+    "timestamp": timestamp,
+    "total_models_scanned": len(df_all),
+    "gated_models": gated_count,
+    "ungated_models": ungated_count,
+    # "total_models_on_huggingface": total_on_hub  # comment if get_total_model_count is undefined
+}])
+
+# Output full list and summary stats
+df_all.to_csv(f"{base_dir}/all_models.csv", index=False)
+summary_df.to_csv(f"{base_dir}/summary.csv", index=False)
+
+# --- Final logs ---
+print(f"\nTotal models scanned: {len(df_all)}")
+print(f"Gated: {gated_count} | Ungated: {ungated_count}")
+print(f"All files saved to: {base_dir}/")
