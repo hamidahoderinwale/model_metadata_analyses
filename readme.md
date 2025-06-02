@@ -7,17 +7,6 @@ Using the [Hugging Face Model Hub](https://huggingface.co/docs/hub/en/index), we
 
 This repo links to the resulting datasets and hosts the scripts used for our analyses. This dataset enables researchers to trace model lineages, measure the influence of base models, and understand the propagation patterns within the open-source AI model ecosystem.
 
-(https://huggingface.co/docs/huggingface.js/en/hub/README):
-- Build complete model trees by following parent_model links
-- Get metadata for a given model and it's fine-tunes
-- Upload csv/json to `datasets` folder and write ` bash ./scripts/ds_folder.sh` to organize in model-specific folder
-
-Once you've made a dataset, you could look into querying the data and try to:
-
-- Get all models with base_model = "llama-2-70b" to see the whole family
-- Follow parent_model links to trace specific lineages
-- Group by base_model and count derivatives to measure influence
-
 ## Environment Setup
 
 Before setting up the environment, ensure you have:
