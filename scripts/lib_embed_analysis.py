@@ -1,3 +1,13 @@
+# Outputted data from runtime 
+'''Loaded 559 libraries from CSV
+Sample data:
+                 Library  Model Count      Timestamp (UTC)
+0           transformers       608101  2025-05-14 20:53:13
+1                   peft       202730  2025-05-14 20:53:13
+2              diffusers        79158  2025-05-14 20:53:13
+3      stable-baselines3        21231  2025-05-14 20:53:13
+4  sentence-transformers        12743  2025-05-14 20:53:13'''
+
 # Install required packages
 !pip install umap-learn matplotlib seaborn pandas sentence-transformers plotly scikit-learn
 
