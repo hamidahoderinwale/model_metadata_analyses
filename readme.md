@@ -46,5 +46,6 @@ If you're adding this project to an existing environment or need to update the r
 ## Links 
 - [Hugging Face dataset of >1100 trees & 53,991 models from ordered list of most-liked models](https://huggingface.co/datasets/midah/removed_gemma_trees)
 - [Hugging Face dataset of models in our analysis](https://huggingface.co/datasets/midah/ecosystem_map)
+- [Hugging Face dataset of HF libraries and their user stats (in files)](https://huggingface.co/datasets/midah/hf_libraries_use)
 - [Plots (private)](https://drive.google.com/drive/folders/1Z_K9Jw-MK-CutZ9trj21wdc_4HA9_wHA?usp=sharing)
 - [Dataset Card (TK)](https://sites.research.google/datacardsplaybook/)
