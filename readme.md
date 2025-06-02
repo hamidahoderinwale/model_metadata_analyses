@@ -1,6 +1,12 @@
 
 # Hugging Face Model Tree Scraping
 
+This project provides Python scripts to systematically map and analyze Hugging Face model ecosystems by building complete family trees of models and their fine-tuned derivatives. 
+
+Using the Hugging Face Hub API, the tools recursively discover parent-child relationships between models, collect comprehensive metadata, and export the data in structured formats for further analysis.
+
+This repo links to the resulting datasets and hosts the scripts used for our analyses. This dataset enables researchers to trace model lineages, measure the influence of base models, and understand the propagation patterns within the open-source AI model ecosystem.
+
 Notebook scripts to do the following using the [HF Hub API](https://huggingface.co/docs/huggingface.js/en/hub/README):
 - Build complete model trees by following parent_model links
 - Get metadata for a given model and it's fine-tunes
