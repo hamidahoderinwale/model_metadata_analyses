@@ -142,12 +142,10 @@ missing[['model_id','depth','children_count','adapters_count','quantized_count']
 print("All analyses complete.")
 print(f"– {MISSING_CARDS_CSV} written with {len(missing)} missing‐card models.")```
 
-**What this does**
+'''**What this does**
 1. **Kaplan–Meier**: compares base‐to‐leaf survival curves for models *with* vs *without* adapters.
 2. **Ecosystem saturation**: scatter of (cumulative base models) vs (their avg descendants) with a regression line.
 3. **Heavy‐tailed lineage**: histogram of children counts on a log scale plus Gini coefficient.
 4. **Adapter “mutation” diversity**: Shannon diversity of tags pre/post adapters.
 5. **Quantization & Task Specialization**: bar chart comparing the top 10 tags in quantized vs non-quantized models.
-6. **Missing cards**: emits a CSV of all models whose `card` column is empty, null, or “N/A”.
-
-All plots are saved under `ecology_analysis_pngs/` and values for Gini & Shannon are in text files. Let me know if you need any tweaks!
+6. **Missing cards**: emits a CSV of all models whose `card` column is empty, null, or “N/A”.'''
