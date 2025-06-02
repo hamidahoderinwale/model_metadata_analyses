@@ -1,5 +1,5 @@
 
-# Hugging Face Model Tree Scraping
+# Hugging Face Model Trees
 
 This project provides Python scripts to systematically map and analyze Hugging Face model ecosystems by building complete family trees of models and their fine-tuned derivatives. 
 
