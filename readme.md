@@ -38,7 +38,7 @@ If you're adding this project to an existing environment or need to update the r
   [OneDrive](https://mcgill-my.sharepoint.com/:f:/g/personal/hamidah_oderinwale_mail_mcgill_ca/EjDp-Eo4PGdKtLxK3H84MHAB8TF1fwv0g5PTZnGu3JBa5Q?e=GaCW1Q)
 
 ## Links 
-- [Hugging Face dataset of (>1100) model trees from ordered list of most-liked models](https://huggingface.co/datasets/midah/removed_gemma_trees)
+- [Hugging Face dataset of >1100 trees & 53,991 models from ordered list of most-liked models](https://huggingface.co/datasets/midah/removed_gemma_trees)
 - [Hugging Face dataset of models in our analysis](https://huggingface.co/datasets/midah/ecosystem_map)
 - [Plots (private)](https://drive.google.com/drive/folders/1Z_K9Jw-MK-CutZ9trj21wdc_4HA9_wHA?usp=sharing)
 - [Dataset Card](https://sites.research.google/datacardsplaybook/)
