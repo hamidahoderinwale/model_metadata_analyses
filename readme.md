@@ -38,5 +38,5 @@ If you're adding this project to an existing environment or need to update the r
   [OneDrive](https://mcgill-my.sharepoint.com/:f:/g/personal/hamidah_oderinwale_mail_mcgill_ca/EjDp-Eo4PGdKtLxK3H84MHAB8TF1fwv0g5PTZnGu3JBa5Q?e=GaCW1Q)
 
 ## Links 
-- [List of models in our analysis [Hugging Face]](https://huggingface.co/datasets/midah/ecosystem_map
+- [Hugging Face dataset of models in our analysis](https://huggingface.co/datasets/midah/ecosystem_map)
 - [Dataset Card](https://sites.research.google/datacardsplaybook/) [TK]
