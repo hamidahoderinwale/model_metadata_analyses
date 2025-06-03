@@ -1,0 +1,93 @@
+{
+  "parameter_distribution": {
+    "mean": {
+      "mean": 2123883219154.856,
+      "ci_lower": 16955395274.627455,
+      "ci_upper": 5030868371422.622
+    },
+    "median": {
+      "mean": 182077111.6405,
+      "ci_lower": 177855747.0,
+      "ci_upper": 184424451.0
+    },
+    "std": {
+      "mean": 248272732026293.8,
+      "ci_lower": 1771559234273.841,
+      "ci_upper": 420787642361684.75
+    },
+    "q1": {
+      "mean": 107726602.538,
+      "ci_lower": 107726601.0,
+      "ci_upper": 107726601.0
+    },
+    "q3": {
+      "mean": 783950835.6795,
+      "ci_lower": 763857920.0,
+      "ci_upper": 808878080.0
+    }
+  },
+  "depth_parameter_correlation": {
+    "mean": -0.001569873171719626,
+    "ci_lower": -0.0023930619374152996,
+    "ci_upper": -0.001010594240545586
+  },
+  "gap_analysis": {
+    "gap_percentage": {
+      "mean": 1.9614348297803121,
+      "ci_lower": 1.821214536522016,
+      "ci_upper": 2.0989801202104474
+    },
+    "models_below_gap": {
+      "mean": 35042.648,
+      "ci_lower": 34815.925,
+      "ci_upper": 35256.05
+    },
+    "models_above_gap": {
+      "mean": 210.304,
+      "ci_lower": 182.0,
+      "ci_upper": 239.02499999999998
+    },
+    "models_in_gap": {
+      "mean": 705.299,
+      "ci_lower": 653.975,
+      "ci_upper": 755.0
+    }
+  },
+  "parameter_bins": {
+    "Tiny (0-1M)": {
+      "mean": 13.118,
+      "ci_lower": 7.0,
+      "ci_upper": 20.0
+    },
+    "Small (1M-10M)": {
+      "mean": 304.818,
+      "ci_lower": 270.0,
+      "ci_upper": 339.0
+    },
+    "Medium (10M-100M)": {
+      "mean": 7865.74,
+      "ci_lower": 7712.0,
+      "ci_upper": 8025.025
+    },
+    "Large (100M-1B)": {
+      "mean": 19260.621,
+      "ci_lower": 19035.95,
+      "ci_upper": 19482.025
+    },
+    "Huge (1B-20B)": {
+      "mean": 7598.351,
+      "ci_lower": 7453.95,
+      "ci_upper": 7749.1
+    },
+    "Gap (20B-70B)": {
+      "mean": 672.305,
+      "ci_lower": 621.975,
+      "ci_upper": 722.025
+    },
+    "Massive (>70B)": {
+      "mean": 243.298,
+      "ci_lower": 214.0,
+      "ci_upper": 274.0
+    }
+  }
+}
