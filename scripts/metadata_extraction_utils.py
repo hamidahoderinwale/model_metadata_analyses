@@ -160,122 +160,86 @@ def extract_date_from_metadata(metadata_str: Any, date_type: str) -> Optional[da
 def extract_model_family(model_id: str, metadata_str: Any) -> Tuple[str, str]:
     """
     Extract model family using both model ID and metadata information.
+    Prioritizes organization/author from model ID, then checks metadata and patterns.
     Returns a tuple of (family, confidence) where confidence is 'high' or 'low'.
-    Handles NaN and non-string metadata inputs.
+    Handles NaN and non-string inputs.
     """
-    if pd.isna(model_id) or pd.isna(metadata_str) or not isinstance(metadata_str, str):
+    if pd.isna(model_id):
         return "Unknown", "low"
 
-    cleaned_metadata_str = metadata_str.strip()
-
-    # First try to get family from metadata (JSON)
-    try:
-        metadata = json.loads(cleaned_metadata_str)
-        if isinstance(metadata, dict):
-            # Check for explicit architecture information
-            arch_keys = ['architecture', 'model_type', 'model_architecture', 'model_family', 'library_name']
-            for key in arch_keys:
-                if key in metadata:
-                    arch = str(metadata[key]).lower()
-                    # Map common architecture names/library names to families
-                    if 'transformers' in arch: return "Transformer (Library)", "high" # Added library check
-                    if 'bert' in arch: return "BERT", "high"
-                    elif 'gpt' in arch: return "GPT", "high"
-                    elif 't5' in arch: return "T5", "high"
-                    elif 'roberta' in arch: return "RoBERTa", "high"
-                    elif 'llama' in arch: return "LLaMA", "high"
-                    elif 'mistral' in arch: return "Mistral", "high"
-                    elif 'falcon' in arch: return "Falcon", "high"
-                    elif 'bloom' in arch: return "BLOOM", "high"
-                    elif 'opt' in arch: return "OPT", "high"
-                    elif 'mpt' in arch: return "MPT", "high"
-                    elif 'phi' in arch: return "Phi", "high"
-                    elif 'gemma' in arch: return "Gemma", "high"
-                    elif 'qwen' in arch: return "Qwen", "high"
-                    elif 'yi' in arch: return "Yi", "high"
-                    elif 'baichuan' in arch: return "Baichuan", "high"
-                    elif 'chatglm' in arch: return "ChatGLM", "high"
-                    elif 'internlm' in arch: return "InternLM", "high"
-                    elif 'deepseek' in arch: return "DeepSeek", "high"
-                    elif 'stablelm' in arch: return "StableLM", "high"
-                    elif 'openllama' in arch: return "OpenLLaMA", "high"
-                    elif 'pythia' in arch: return "Pythia", "high"
-                    elif 'cerebras' in arch: return "Cerebras", "high"
-                    elif 'mamba' in arch: return "Mamba", "high"
-                    elif 'recurrent' in arch: return "Recurrent", "low"
-                    elif 'rwkv' in arch: return "RWKV", "high"
-                    elif 'transformer' in arch: return "Transformer", "low" # Generic transformer
-    except json.JSONDecodeError:
-        logger.debug("Metadata is not valid JSON for family extraction.")
-        pass
-
-    # If metadata doesn't help, try model ID
     model_id_lower = str(model_id).lower()
+    cleaned_metadata_str = str(metadata_str).strip() if pd.notna(metadata_str) else ""
 
-    # Define model family patterns with their confidence levels
-    family_patterns = {
-        'bert': ('BERT', 'high'),
-        'gpt': ('GPT', 'high'),
-        't5': ('T5', 'high'),
-        'roberta': ('RoBERTa', 'high'),
-        'llama': ('LLaMA', 'high'),
-        'mistral': ('Mistral', 'high'),
-        'falcon': ('Falcon', 'high'),
-        'bloom': ('BLOOM', 'high'),
-        'opt': ('OPT', 'high'),
-        'gpt2': ('GPT-2', 'high'),
-        'gpt-j': ('GPT-J', 'high'),
-        'gpt-neo': ('GPT-Neo', 'high'),
-        'gpt-neox': ('GPT-NeoX', 'high'),
-        'mpt': ('MPT', 'high'),
-        'phi': ('Phi', 'high'),
-        'gemma': ('Gemma', 'high'),
-        'qwen': ('Qwen', 'high'),
-        'yi': ('Yi', 'high'),
-        'baichuan': ('Baichuan', 'high'),
-        'chatglm': ('ChatGLM', 'high'),
-        'internlm': ('InternLM', 'high'),
-        'deepseek': ('DeepSeek', 'high'),
-        'stablelm': ('StableLM', 'high'),
-        'openllama': ('OpenLLaMA', 'high'),
-        'pythia': ('Pythia', 'high'),
-        'cerebras': ('Cerebras', 'high'),
-        'mamba': ('Mamba', 'high'),
-        'recurrent': ('Recurrent', 'low'),
-        'rwkv': ('RWKV', 'high'),
-        'transformer': ('Transformer', 'low') # Generic transformer in ID
-    }
+    # 1. Prioritize extracting from model_id (part before the first slash)
+    parts = model_id_lower.split('/', 1)
+    if len(parts) > 0 and parts[0]:
+        org_or_author = parts[0]
 
-    # Check for pattern matches in model ID
+        # Check if the organization/author is a well-known one often associated with specific families
+        # We can use the existing family patterns keys for this check
+        family_patterns_keys = set([k.lower() for k in family_patterns.keys()]) # Using existing patterns
+        org_patterns_keys = set([k.lower() for k in org_patterns.keys()]) # Using existing patterns
+
+        if org_or_author in org_patterns_keys: # If the first part is a known organization
+             # Now try to find a more specific family name from metadata or the rest of the model_id
+            more_specific_family, confidence = ("Unknown", "low")
+
+            # Try parsing metadata for architecture/model_type
+            try:
+                metadata = json.loads(cleaned_metadata_str)
+                if isinstance(metadata, dict):
+                     arch_keys = ['architecture', 'model_type', 'model_architecture', 'model_family', 'library_name']
+                     for key in arch_keys:
+                         if key in metadata:
+                            arch = str(metadata[key]).lower()
+                            # Check if this architecture matches any of the known family patterns
+                            for pattern, (family, conf) in family_patterns.items():
+                                if pattern in arch:
+                                    return family, "high" # High confidence if architecture matches a known family
+            except json.JSONDecodeError:
+                logger.debug("Metadata is not valid JSON for specific family extraction.")
+                pass
+
+            # If metadata didn't give a specific family, check the rest of the model_id (after the slash)
+            if len(parts) > 1 and parts[1]:
+                rest_of_id = parts[1]
+                for pattern, (family, conf) in family_patterns.items():
+                     if pattern in rest_of_id:
+                         # Use the family from the pattern match, but maybe lower confidence
+                         return family, "high" if conf == "high" else "low" # Keep original confidence if high, otherwise low
+
+            # If no specific family found in metadata or rest of ID, use the organization name as a low confidence family
+            return org_patterns.get(org_or_author, org_or_author), "low" # Return mapped org name if available, else raw
+
+        elif org_or_author in family_patterns_keys: # If the first part IS a known family name directly (less common)
+             return family_patterns[org_or_author][0], family_patterns[org_or_author][1] # Return family and its confidence
+
+        else: # If the first part is not a known org or family pattern
+             # Treat the first part as the family with low confidence
+             return org_or_author.replace('-', ' ').title(), "low" # Basic formatting
+
+    # 2. If model_id has no slash or first part is empty, fall back to existing logic (metadata then full model_id patterns)
+    if cleaned_metadata_str:
+        try:
+            metadata = json.loads(cleaned_metadata_str)
+            if isinstance(metadata, dict):
+                arch_keys = ['architecture', 'model_type', 'model_architecture', 'model_family', 'library_name']
+                for key in arch_keys:
+                    if key in metadata:
+                        arch = str(metadata[key]).lower()
+                        for pattern, (family, conf) in family_patterns.items():
+                            if pattern in arch:
+                                return family, conf
+        except json.JSONDecodeError:
+             logger.debug("Metadata is not valid JSON for fallback family extraction.")
+             pass
+
+    # Fallback to checking patterns in the full model ID
     for pattern, (family, confidence) in family_patterns.items():
         if pattern in model_id_lower:
             return family, confidence
 
-    # Check for organization-specific patterns in model ID
-    org_patterns = {
-        'meta-ai': 'Meta',
-        'google': 'Google',
-        'microsoft': 'Microsoft',
-        'huggingface': 'HuggingFace',
-        'stabilityai': 'StabilityAI',
-        'deepmind': 'DeepMind',
-        'openai': 'OpenAI',
-        'anthropic': 'Anthropic',
-        'cohere': 'Cohere',
-        'nvidia': 'NVIDIA',
-        'amazon': 'Amazon',
-        'apple': 'Apple',
-        'salesforce': 'Salesforce',
-        'facebook': 'Meta',
-        'alibaba': 'Alibaba',
-        'tencent': 'Tencent',
-        'baidu': 'Baidu'
-    }
-
-    for org, family in org_patterns.items():
-        if org in model_id_lower:
-            return f"{family} Model", "low" # Label as low confidence if only org is matched
-
+    # Final fallback if nothing matches
     return "Other", "low"
 
 
