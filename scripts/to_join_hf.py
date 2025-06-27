@@ -1,13 +1,6 @@
-from huggingface_hub import hf_hub_download
-import os
+from datasets import load_dataset
 
-repo_id = "midah/enriched_model_atlas_data"
-chunk_files = [f"chunk_{i:04d}.jsonl" for i in range(NUM_CHUNKS)]  # Replace NUM_CHUNKS
+ds = load_dataset("midah/enriched_model_atlas_data", split="train")
 
-with open("joined_dataset.jsonl", "w") as outfile:
-    for fname in chunk_files:
-        local_path = hf_hub_download(repo_id=repo_id, filename=fname, repo_type="dataset")
-        with open(local_path, "r") as infile:
-            for line in infile:
-                outfile.write(line)
-              
+ds.to_csv("joined_model_atlas.csv")
+print("Saved dataset as joined_model_atlas.csv")
