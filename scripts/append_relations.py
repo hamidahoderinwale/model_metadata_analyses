@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from datasets import load_dataset, Dataset
 import pandas as pd
 
-# get page 
+
+# --- Retry logic for fetching model pages ---
 @backoff.on_exception(backoff.expo, (requests.exceptions.RequestException, Exception), max_tries=10)
 def fetch_model_page(model_id):
     url = f"https://huggingface.co/{model_id}"
@@ -15,7 +16,7 @@ def fetch_model_page(model_id):
     resp.raise_for_status()
     return resp.text
 
-# parent lineage rows 
+# --- Extract parent lineage rows ---
 def extract_lineage_rows_from_html(html, model_row):
     soup = BeautifulSoup(html, "html.parser")
     model_input = model_row["model_id"]
@@ -84,7 +85,7 @@ def extract_lineage_rows_from_html(html, model_row):
 
     return lineage_rows
 
-# for testing 
+# --- Main driver (test version) ---
 def process_first_10_models(input_dataset):
     all_rows = []
     for row in input_dataset.select(range(min(10, len(input_dataset)))):
@@ -97,20 +98,7 @@ def process_first_10_models(input_dataset):
             print(f"Error fetching {model_id}: {e}")
     return Dataset.from_pandas(pd.DataFrame(all_rows))
 
-  # for prod
-'''def process_all_models(input_dataset):
-    all_rows = []
-    for row in tqdm(input_dataset, desc="processing models"):
-        model_id = row["model_id"]
-        try:
-            html = fetch_model_page(model_id)
-            lineage_rows = extract_lineage_rows_from_html(html, row)
-            all_rows.extend(lineage_rows)
-        except Exception as e:
-            print(f"Error fetching {model_id}: {e}")
-    return Dataset.from_pandas(pd.DataFrame(all_rows))'''
-
-
+# --- Run ---
 if __name__ == "__main__":
     INPUT_DATASET = "midah/ecosystem_map"
 
@@ -119,8 +107,8 @@ if __name__ == "__main__":
 
     # Save locally instead of pushing for test
     output_dataset.to_csv("lineage_test_output.csv")
-    # use to push to the hub 
-    # 'output_dataset.push_to_hub("your_org/your_output_dataset_test")'
+    # use to push to the hub
+    'output_dataset.push_to_hub("your_org/your_output_dataset_test")'
     print("appended dataset is complete")
 
     print("Test output saved to lineage_test_output.csv")
