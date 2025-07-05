@@ -1,0 +1,7 @@
+model_type,config_class
+albert,AlbertConfig
+align,AlignConfig
+altclip,AltCLIPConfig
+arcee,ArceeConfig
+aria,AriaConfig
+zoedepth,ZoeDepthConfig
