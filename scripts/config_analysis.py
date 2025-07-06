@@ -1,6 +1,7 @@
 import json
 import re
 from collections import Counter, defaultdict
+from datasets import load_dataset # Import the necessary library
 
 # === Step 1: Extract file list from model metadata siblings ===
 def extract_repo_files_from_metadata(metadata_str):
@@ -102,7 +103,7 @@ def process_huggingface_dataset(dataset_rows):
             model_id = row.get("model_id")
             metadata_str = row.get("metadata")
         elif isinstance(row, list):
-            # Assuming row is a list from CSV parsing
+            # Assuming row is a list from CSV parsing (though this branch is less relevant for HF dataset focus)
             if len(row) > 3: # Ensure 'metadata' column exists (index 3)
                 model_id = row[0]
                 metadata_str = row[3] # 'metadata' is the 4th column (index 3)
@@ -127,70 +128,82 @@ def process_huggingface_dataset(dataset_rows):
 
 # Example of how you would use this with a real dataset:
 if __name__ == "__main__":
-    # --- METHOD 1: Loading from a CSV file ---
-    # Assuming you have your dataset in a CSV file named 'huggingface_models.csv'
-    # with columns like 'model_id', 'gated', 'card', 'metadata', ...
-    #
-    # import csv
-    #
-    # dataset_rows_from_csv = []
-    # try:
-    #     with open('huggingface_models.csv', 'r', encoding='utf-8') as f:
-    #         reader = csv.reader(f)
-    #         header = next(reader) # Skip header row
-    #         for row in reader:
-    #             dataset_rows_from_csv.append(row)
-    #     print("Processing data loaded from CSV...")
-    #     processed_results_csv = process_huggingface_dataset(dataset_rows_from_csv)
-    #     print("\n--- CSV Processing Summary ---")
-    #     for model_id, data in processed_results_csv.items():
-    #         print(f"Model ID: {model_id}")
-    #         print(f"  Files listed: {data['files_listed']}")
-    #         print(f"  Can analyze architecture: {data['can_analyze_architecture']}")
-    # except FileNotFoundError:
-    #     print("Error: 'huggingface_models.csv' not found. Please create the file or adjust the path.")
-    # except Exception as e:
-    #     print(f"An error occurred while reading the CSV: {e}")
-
-
     # --- METHOD 2: Using Hugging Face's datasets library (recommended for HF datasets) ---
     # If your data is in a Hugging Face dataset (e.g., from the Hub)
     # You would typically install it: pip install datasets
-    #
-    # from datasets import load_dataset
-    #
-    # try:
-    #     # Replace 'your_dataset_name' and 'your_config_name' with actual values
-    #     # For example, if you downloaded the model metadata directly as a JSONL or similar,
-    #     # you might load it as a local file, or if it's a specific dataset on the Hub.
-    #     # This is a placeholder for how you would load your specific dataset.
-    #     # Example for a hypothetical dataset:
-    #     # dataset = load_dataset('some_org/some_model_metadata_dataset', split='train')
-    #
-    #     # If your dataset is a local JSONL file, for instance:
-    #     # dataset = load_dataset('json', data_files='your_local_model_metadata.jsonl', split='train')
-    #
-    #     # Placeholder for demonstration if you don't have a specific HF dataset ready:
-    #     print("\n--- To use the 'datasets' library, uncomment and configure the code below. ---")
-    #     print("Example: dataset = load_dataset('some_org/some_model_metadata_dataset', split='train')")
-    #     print("Or for a local JSONL: dataset = load_dataset('json', data_files='your_local_model_metadata.jsonl', split='train')")
-    #
-    #     # Example of how you'd iterate if 'dataset' was loaded:
-    #     # dataset_rows_from_hf = []
-    #     # for entry in dataset:
-    #     #     dataset_rows_from_hf.append(entry) # Assuming each entry is a dict
-    #
-    #     # print("Processing data loaded from Hugging Face datasets library...")
-    #     # processed_results_hf = process_huggingface_dataset(dataset_rows_from_hf)
-    #     # print("\n--- Hugging Face Datasets Summary ---")
-    #     # for model_id, data in processed_results_hf.items():
-    #     #     print(f"Model ID: {model_id}")
-    #     #     print(f"  Files listed: {data['files_listed']}")
-    #     #     print(f"  Can analyze architecture: {data['can_analyze_architecture']}")
-    #
-    # except ImportError:
-    #     print("\n'datasets' library not found. Install with: pip install datasets")
-    # except Exception as e:
-    #     print(f"An error occurred while loading/processing the Hugging Face dataset: {e}")
 
-    print("\nScript execution finished. Provide your dataset rows (e.g., from CSV or Hugging Face datasets) to the 'process_huggingface_dataset' function.")
+    try:
+        # To make this runnable without needing a specific large dataset from the Hub,
+        # we'll create a dummy Hugging Face Dataset from a list of dictionaries.
+        # In a real scenario, you would replace this with:
+        # dataset = load_dataset('your_org/your_dataset_name', split='train')
+        # OR
+        # dataset = load_dataset('json', data_files='your_local_model_metadata.jsonl', split='train')
+
+        print("\n--- Demonstrating with a simulated Hugging Face Dataset ---")
+
+        # Simulate a Hugging Face dataset by providing a list of dictionaries
+        # Each dictionary represents a model entry with 'model_id' and 'metadata'.
+        # The 'metadata' field is a string representation of a JSON object.
+        simulated_hf_dataset_entries = [
+            {
+                "model_id": "bert-base-uncased",
+                "metadata": json.dumps({
+                    "siblings": [
+                        "RepoSibling(rfilename='config.json', size=256, blob_id='xyz')",
+                        "RepoSibling(rfilename='model.safetensors.index.json', size=1024, blob_id='abc')",
+                        "RepoSibling(rfilename='tokenizer.json', size=512, blob_id='def')"
+                    ]
+                })
+            },
+            {
+                "model_id": "gpt2",
+                "metadata": json.dumps({
+                    "siblings": [
+                        "RepoSibling(rfilename='config.json', size=256, blob_id='xyz')",
+                        "RepoSibling(rfilename='pytorch_model.bin', size=1024, blob_id='abc')",
+                        "RepoSibling(rfilename='tokenizer.json', size=512, blob_id='def')"
+                    ]
+                })
+            },
+            {
+                "model_id": "my-custom-model",
+                "metadata": json.dumps({
+                    "siblings": [
+                        "RepoSibling(rfilename='README.md', size=100, blob_id='123')",
+                        "RepoSibling(rfilename='config.json', size=300, blob_id='456')"
+                    ]
+                })
+            },
+             {
+                "model_id": "another-model-with-index",
+                "metadata": json.dumps({
+                    "siblings": [
+                        "RepoSibling(rfilename='config.json', size=256, blob_id='xyz')",
+                        "RepoSibling(rfilename='model.safetensors.index.json', size=1024, blob_id='abc')",
+                        "RepoSibling(rfilename='special_weights.bin', size=2048, blob_id='ghi')"
+                    ]
+                })
+            }
+        ]
+
+        # In a real scenario, 'dataset_rows_from_hf' would come directly from
+        # a loaded Hugging Face Dataset object's iteration.
+        # For this simulation, we use the list directly.
+        dataset_rows_from_hf = simulated_hf_dataset_entries
+
+        print("Processing data loaded from Hugging Face datasets library (simulated)...")
+        processed_results_hf = process_huggingface_dataset(dataset_rows_from_hf)
+        
+        print("\n--- Hugging Face Datasets Processing Summary ---")
+        for model_id, data in processed_results_hf.items():
+            print(f"Model ID: {model_id}")
+            print(f"  Files listed: {data['files_listed']}")
+            print(f"  Can analyze architecture: {data['can_analyze_architecture']}")
+
+    except ImportError:
+        print("\n'datasets' library not found. Install with: pip install datasets")
+    except Exception as e:
+        print(f"An error occurred while loading/processing the Hugging Face dataset: {e}")
+
+    print("\nScript execution finished.")
