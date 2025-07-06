@@ -1,72 +1,101 @@
+import os
+import pandas as pd
 import json
-from collections import Counter, defaultdict
+import re
+from collections import defaultdict, Counter
+from tqdm import tqdm
+from huggingface_hub import hf_hub_download
 
-# Load config.json
-with open("config.json", "r") as f:
-    config = json.load(f)
+# === SETTINGS ===
+INPUT_CSV = "models_metadata.csv"  # must contain at least `model_id` column
+OUTPUT_CSV = "model_architecture_analysis.csv"
 
-# Load model.safetensors.index.json
-with open("model.safetensors.index.json", "r") as f:
-    index = json.load(f)
+# === LOAD DATA ===
+df = pd.read_csv(INPUT_CSV)
 
-print("=== MODEL ARCHITECTURE ANALYSIS ===")
+# Optional: check for availability of model.safetensors.index.json (if not already filtered)
+# This assumes you have pre-filtered for models with index files if needed
+model_ids = df['model_id'].dropna().unique().tolist()
 
-# 1. Layer count and types (inferred from parameter names)
-layer_types = defaultdict(int)
-layer_prefix = "model.layers."
-layer_ids = set()
+# === RESULTS ===
+results = []
 
-for param_name in index["weight_map"]:
-    if param_name.startswith(layer_prefix):
-        parts = param_name.split(".")
-        if len(parts) > 3:
-            layer_id = parts[2]
-            layer_type = parts[3]
-            layer_types[layer_type] += 1
-            layer_ids.add(layer_id)
+def extract_languages_from_config(config):
+    lang_field = config.get("language", [])
+    if isinstance(lang_field, list):
+        return lang_field
+    elif isinstance(lang_field, str):
+        return [lang_field]
+    return []
 
-layer_count = config.get("num_hidden_layers", len(layer_ids))
-print(f"Layer count: {layer_count}")
-print("Layer types (by parameter occurrence):")
-for ltype, count in layer_types.items():
-    print(f"  {ltype}: {count}")
+for model_id in tqdm(model_ids, desc="Processing models"):
+    try:
+        # Download config.json
+        config_path = hf_hub_download(repo_id=model_id, filename="config.json", force_download=False)
+        with open(config_path, "r") as f:
+            config = json.load(f)
 
-# 2. Vocab size
-vocab_size = config.get("vocab_size", "Unknown")
-print(f"Vocab size: {vocab_size}")
+        # Download model.safetensors.index.json
+        index_path = hf_hub_download(repo_id=model_id, filename="model.safetensors.index.json", force_download=False)
+        with open(index_path, "r") as f:
+            index = json.load(f)
 
-# 3. Shape variety
-print("\n=== SHAPE VARIETY ===")
-if "shapes" in index:
-    shape_counter = Counter(tuple(v) for v in index["shapes"].values())
-    print("Unique tensor shapes and their counts:")
-    for shape, count in shape_counter.items():
-        print(f"  shape {shape}: {count}")
-else:
-    print("No shape information found in index file. (Some index files do not include shapes.)")
+        # === ARCHITECTURE ANALYSIS ===
+        layer_prefix = "model.layers."
+        layer_types = defaultdict(int)
+        layer_ids = set()
 
-# 4. Quantization scheme and subproperties
-print("\n=== QUANTIZATION CONFIGURATION ===")
-qcfg = config.get("quantization_config")
-if qcfg:
-    print("Quantization config found:")
-    for k, v in qcfg.items():
-        print(f"  {k}: {v}")
-else:
-    print("No quantization_config found in config.json.")
+        for param_name in index.get("weight_map", {}):
+            if param_name.startswith(layer_prefix):
+                parts = param_name.split(".")
+                if len(parts) > 3:
+                    layer_id = parts[2]
+                    layer_type = parts[3]
+                    layer_types[layer_type] += 1
+                    layer_ids.add(layer_id)
 
-# Optional: explain quantization subproperties if present
-if qcfg:
-    fmt = qcfg.get("fmt", "")
-    quant_method = qcfg.get("quant_method", "")
-    block_size = qcfg.get("weight_block_size", "")
-    activation_scheme = qcfg.get("activation_scheme", "")
-    print("\nQuantization details summary:")
-    print(f"- Format: {fmt}")
-    print(f"- Method: {quant_method}")
-    print(f"- Weight block size: {block_size}")
-    print(f"- Activation quantization scheme: {activation_scheme}")
-    # FP8 specifics (from DeepSeek docs)
-    if quant_method == "fp8":
-        print("  (DeepSeek-V3 uses FP8 e4m3 quantization with 128x128 block scaling.)")
-        print("  Dequantization uses per-block scale tensors stored as float32.")
+        layer_count = config.get("num_hidden_layers", len(layer_ids))
+        vocab_size = config.get("vocab_size", "Unknown")
+        qcfg = config.get("quantization_config", {})
+
+        # Shape stats
+        shape_counts = {}
+        if "shapes" in index:
+            shape_counts = Counter(tuple(v) for v in index["shapes"].values())
+
+        # Language info
+        languages = extract_languages_from_config(config)
+
+        results.append({
+            "model_id": model_id,
+            "layer_count": layer_count,
+            "layer_types": dict(layer_types),
+            "vocab_size": vocab_size,
+            "quantization_method": qcfg.get("quant_method", ""),
+            "quant_format": qcfg.get("fmt", ""),
+            "quant_weight_block_size": qcfg.get("weight_block_size", ""),
+            "quant_activation_scheme": qcfg.get("activation_scheme", ""),
+            "language_codes": languages,
+            "num_unique_shapes": len(shape_counts),
+            "shape_counts": dict(shape_counts)
+        })
+
+    except Exception as e:
+        print(f"⚠️ Skipped {model_id} due to error: {e}")
+        continue
+
+# === SAVE RESULTS ===
+df_out = pd.DataFrame(results)
+df_out.to_csv(OUTPUT_CSV, index=False)
+print(f"\n✅ Analysis complete. Results saved to {OUTPUT_CSV}.")
+
+# === LANGUAGE DISTRIBUTION SUMMARY ===
+all_langs = [lang for row in df_out['language_codes'].dropna() for lang in row]
+lang_counter = Counter(all_langs)
+print("\n🌍 Language distribution across models:")
+for lang, count in lang_counter.most_common():
+    print(f"{lang}: {count}")
+
+# Optional: Save language distribution
+lang_df = pd.DataFrame(lang_counter.items(), columns=["language", "count"]).sort_values("count", ascending=False)
+lang_df.to_csv("language_distribution_from_config.csv", index=False)
