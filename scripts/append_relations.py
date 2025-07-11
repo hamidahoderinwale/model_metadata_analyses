@@ -1,4 +1,6 @@
-!pip install datasets backoff pandas bs4 tqdm
+!pip install backoff pandas bs4 tqdm
+!pip install -U datasets
+from datasets import load_dataset
 from tqdm import tqdm
 import requests
 import backoff
@@ -6,9 +8,13 @@ from bs4 import BeautifulSoup
 from datasets import load_dataset, Dataset
 import pandas as pd
 
+# Login using e.g. `huggingface-cli login` to access this dataset
+# input dataset with model_ids
+ds = load_dataset("midah/removed_gemma_trees")
+input_dataset = ds["train"] # Select the 'train' split
 
-# --- Retry logic for fetching model pages ---
-@backoff.on_exception(backoff.expo, (requests.exceptions.RequestException, Exception), max_tries=10)
+# get page
+@backoff.on_exception(backoff.expo, (requests.exceptions.RequestException, Exception), max_tries=7)
 def fetch_model_page(model_id):
     url = f"https://huggingface.co/{model_id}"
     headers = {"User-Agent": "Mozilla/5.0 (compatible; ModelLineageBot/1.0)"}
@@ -16,7 +22,7 @@ def fetch_model_page(model_id):
     resp.raise_for_status()
     return resp.text
 
-# --- Extract parent lineage rows ---
+# parent lineage rows
 def extract_lineage_rows_from_html(html, model_row):
     soup = BeautifulSoup(html, "html.parser")
     model_input = model_row["model_id"]
@@ -75,9 +81,6 @@ def extract_lineage_rows_from_html(html, model_row):
             if "/" in parent_id:
                 lineage_rows.append({
                     "model_id": model_id,
-                    "gated": model_row.get("gated"),
-                    "card": model_row.get("card"),
-                    "metadata": model_row.get("metadata"),
                     "parent_model_id": parent_id,
                     "parent_relationship": rel_type,
                     "base_model_id": base_model_id
@@ -85,10 +88,12 @@ def extract_lineage_rows_from_html(html, model_row):
 
     return lineage_rows
 
-# --- Main driver (test version) ---
-def process_first_10_models(input_dataset):
+# process models (set n to number of models to process)
+def process_n_models(input_dataset):
     all_rows = []
-    for row in input_dataset.select(range(min(10, len(input_dataset)))):
+    # n = len(df) or specified # 
+    n = 500
+    for row in input_dataset.select(range(min(n, len(input_dataset)))): #
         model_id = row["model_id"]
         try:
             html = fetch_model_page(model_id)
@@ -98,17 +103,30 @@ def process_first_10_models(input_dataset):
             print(f"Error fetching {model_id}: {e}")
     return Dataset.from_pandas(pd.DataFrame(all_rows))
 
-# --- Run ---
-if __name__ == "__main__":
-    INPUT_DATASET = "midah/ecosystem_map"
+# for prod
+def process_all_models(input_dataset):
+    all_rows = []
+    for row in tqdm(input_dataset, desc="processing models"):
+        model_id = row["model_id"]
+        try:
+            html = fetch_model_page(model_id)
+            lineage_rows = extract_lineage_rows_from_html(html, row)
+            all_rows.extend(lineage_rows)
+        except Exception as e:
+            print(f"Error fetching {model_id}: {e}")
+    return Dataset.from_pandas(pd.DataFrame(all_rows))
 
-    input_dataset = load_dataset(INPUT_DATASET,  data_files="all_models.csv", split="train")
-    output_dataset = process_first_10_models(input_dataset)
+# Process the models
+output_dataset = process_n_models(input_dataset)
 
-    # Save locally instead of pushing for test
+# Save results
+if len(output_dataset) > 0:
     output_dataset.to_csv("lineage_test_output.csv")
-    # use to push to the hub
-    'output_dataset.push_to_hub("your_org/your_output_dataset_test")'
-    print("appended dataset is complete")
+    print(f"Saved {len(output_dataset)} lineage rows to lineage_test_output.csv")
+else:
+    print("No lineage data found in the processed models")
 
-    print("Test output saved to lineage_test_output.csv")
+# for prod (change output dataset path and uncomment)
+# output_dataset = process_all_models(input_dataset)
+# output_dataset.to_csv("lineage_full_output.csv")  # Save locally instead of pushing to hub
+# print("Full dataset processing complete")
