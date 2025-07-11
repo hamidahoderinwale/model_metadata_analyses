@@ -1,3 +1,8 @@
+# no async has been added
+# currently set to 500 models but the number of input models can be changed to the total # of rows
+# change hf input dataset as needed 
+# outputs csv 
+
 !pip install backoff pandas bs4 tqdm
 !pip install -U datasets
 from datasets import load_dataset
